@@ -6,11 +6,20 @@
   <title>김정호 · 안젤리카 모바일 청첩장</title>
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     html, body {
       overflow-x: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Apple SD Gothic Neo",
+        "Noto Sans KR",
+        sans-serif;
       background: #fffaf6;
       color: #2f2a26;
     }
@@ -43,13 +52,6 @@
       z-index: 1;
     }
 
-    .hero-dim {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0);
-      z-index: 2;
-    }
-
     .invite-text {
       position: absolute;
       left: 50%;
@@ -64,6 +66,7 @@
       letter-spacing: 0.2em;
       text-shadow: 0 2px 20px rgba(0,0,0,.45);
       z-index: 3;
+      transition: opacity .2s linear;
     }
 
     .scroll-hint {
@@ -75,6 +78,7 @@
       font-size: 12px;
       letter-spacing: .2em;
       z-index: 3;
+      transition: opacity .2s linear;
     }
 
     .content {
@@ -109,23 +113,50 @@
       font-size: 15px;
       color: #756c64;
     }
+
   </style>
 </head>
 
 <body>
 
 <section class="hero-scroll" id="hero">
+
   <div class="hero-sticky">
-    <img src="./photo.jpg" class="hero-photo" id="heroPhoto" alt="wedding photo">
-    <div class="hero-dim" id="heroDim"></div>
-    <div class="invite-text" id="inviteText">초대합니다</div>
-    <div class="scroll-hint" id="scrollHint">SCROLL</div>
+
+    <img
+      src="./photo.jpg"
+      class="hero-photo"
+      id="heroPhoto"
+      alt="wedding photo"
+    >
+
+    <div
+      class="invite-text"
+      id="inviteText"
+    >
+      초대합니다
+    </div>
+
+    <div
+      class="scroll-hint"
+      id="scrollHint"
+    >
+      SCROLL
+    </div>
+
   </div>
+
 </section>
 
 <main class="content">
-  <div class="names">김정호 · 안젤리카</div>
-  <div class="date">2026년 6월 27일</div>
+
+  <div class="names">
+    김정호 · 안젤리카
+  </div>
+
+  <div class="date">
+    2026년 6월 27일
+  </div>
 
   <p>
     서로의 삶에 따뜻한 동행이 되어<br>
@@ -137,39 +168,86 @@
     더없는 기쁨으로 간직하겠습니다.
   </p>
 
-  <div class="place">아이라이크마운틴</div>
-  <div class="address">경기도 고양시 덕양구 고양대로 2002번길 29</div>
+  <div class="place">
+    아이라이크마운틴
+  </div>
+
+  <div class="address">
+    경기도 고양시 덕양구 고양대로 2002번길 29
+  </div>
+
 </main>
 
 <script>
-const hero = document.getElementById("hero");
-const photo = document.getElementById("heroPhoto");
-const dim = document.getElementById("heroDim");
-const text = document.getElementById("inviteText");
-const hint = document.getElementById("scrollHint");
+
+const hero =
+  document.getElementById("hero");
+
+const photo =
+  document.getElementById("heroPhoto");
+
+const text =
+  document.getElementById("inviteText");
+
+const hint =
+  document.getElementById("scrollHint");
 
 function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
+  return Math.min(
+    Math.max(value, min),
+    max
+  );
 }
 
 function updateHero() {
-  const rect = hero.getBoundingClientRect();
-  const scrollable = hero.offsetHeight - window.innerHeight;
-  const progress = clamp(-rect.top / scrollable, 0, 1);
 
-  const scale = 1 + progress * 0.5;
-  photo.style.transform = `scale(${scale})`;
+  const rect =
+    hero.getBoundingClientRect();
 
-  const textProgress = clamp((progress - 0.45) / 0.35, 0, 1);
-  text.style.opacity = textProgress;
+  const scrollable =
+    hero.offsetHeight -
+    window.innerHeight;
 
-  dim.style.background = `rgba(0,0,0,${textProgress * 0.25})`;
-  hint.style.opacity = String(1 - progress * 1.8);
+  const progress =
+    clamp(
+      -rect.top / scrollable,
+      0,
+      1
+    );
+
+  const scale =
+    1 + progress * 0.5;
+
+  photo.style.transform =
+    `scale(${scale})`;
+
+  const textProgress =
+    clamp(
+      (progress - 0.45) / 0.35,
+      0,
+      1
+    );
+
+  text.style.opacity =
+    textProgress;
+
+  hint.style.opacity =
+    String(1 - progress * 1.8);
 }
 
-window.addEventListener("scroll", updateHero, { passive: true });
-window.addEventListener("resize", updateHero);
+window.addEventListener(
+  "scroll",
+  updateHero,
+  { passive: true }
+);
+
+window.addEventListener(
+  "resize",
+  updateHero
+);
+
 updateHero();
+
 </script>
 
 </body>
