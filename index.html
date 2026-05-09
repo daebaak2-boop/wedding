@@ -1,102 +1,244 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>김정호 · 안젤리카 결혼합니다</title>
-  <meta name="description" content="2026년 6월 27일, 김정호와 안젤리카의 결혼식에 초대합니다." />
-  <meta property="og:title" content="김정호 · 안젤리카 결혼합니다" />
-  <meta property="og:description" content="2026년 6월 27일, 아이라이크마운틴" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="./photo.jpg" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>김정호 · 안젤리카 모바일 청첩장</title>
+
   <style>
-    :root{--bg:#faf8f4;--ink:#2f2a25;--muted:#7d746b;--line:#e7dfd5;--card:#fffdf9}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,sans-serif;line-height:1.7}
-    .wrap{max-width:480px;margin:0 auto;background:var(--card);min-height:100vh}
-    section{padding:52px 26px;border-bottom:1px solid var(--line)}
-    .hero{padding-top:72px;text-align:center}
-    .eyebrow{letter-spacing:.22em;font-size:12px;color:var(--muted);margin-bottom:22px}
-    h1{font-size:30px;font-weight:400;line-height:1.35;margin:0 0 18px}
-    .names{font-size:22px;margin:26px 0 8px}
-    .date{color:var(--muted);font-size:15px}
-    .photo{width:100%;aspect-ratio:4/5;margin:34px 0 0;border-radius:18px;background:#eee center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:#9a9188;font-size:14px}
-    .photo.placeholder{border:1px dashed #d8cec3}
-    .title{font-size:18px;font-weight:500;text-align:center;margin:0 0 24px}
-    .text{text-align:center;color:#554d45;white-space:pre-line}
-    .info{display:grid;gap:14px}
-    .row{padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff}
-    .label{font-size:12px;color:var(--muted);margin-bottom:4px}
-    .value{font-size:15px}
-    .btns{display:grid;gap:10px;margin-top:22px}
-    a.btn,button.btn{width:100%;display:block;text-align:center;padding:14px 16px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);text-decoration:none;font-size:15px}
-    button.btn{cursor:pointer;font-family:inherit}
-    .small{font-size:12px;color:var(--muted);text-align:center;margin-top:18px}
-    footer{padding:36px 26px;text-align:center;color:var(--muted);font-size:12px}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: #fffaf6;
+      color: #2f2a26;
+    }
+
+    body {
+      line-height: 1.8;
+    }
+
+    .hero-scroll {
+      position: relative;
+      height: 220vh;
+      background: #000;
+    }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .hero-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("photo.jpg");
+      background-size: cover;
+      background-position: center center;
+      transform: scale(1);
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    .hero-dim {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      will-change: background;
+    }
+
+    .invite-text {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      text-align: center;
+      color: white;
+      opacity: 0;
+      font-size: clamp(34px, 8vw, 60px);
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-shadow: 0 2px 20px rgba(0,0,0,.4);
+      transition: opacity .2s linear;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,.85);
+      font-size: 12px;
+      letter-spacing: .2em;
+    }
+
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+      text-align: center;
+    }
+
+    .names {
+      font-size: 30px;
+      letter-spacing: .08em;
+      margin-bottom: 20px;
+    }
+
+    .date {
+      font-size: 20px;
+      color: #7d736b;
+      margin-bottom: 40px;
+    }
+
+    .place {
+      margin-top: 36px;
+      font-size: 18px;
+    }
+
+    .address {
+      font-size: 15px;
+      color: #756c64;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 14px 24px;
+      border: 1px solid #c8b9ab;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #3b342e;
+      font-size: 14px;
+      background: rgba(255,255,255,.5);
+    }
   </style>
 </head>
+
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <div class="eyebrow">WEDDING INVITATION</div>
-      <h1>저희 결혼합니다</h1>
-      <div class="names">김정호&nbsp;&nbsp;·&nbsp;&nbsp;안젤리카</div>
-      <div class="date">2026년 6월 27일</div>
 
-      <div class="photo placeholder">
-        photo.jpg 파일을 함께 업로드하면<br>이 영역에 사진이 표시됩니다
-      </div>
-    </section>
+<section class="hero-scroll" id="hero">
+  <div class="hero-sticky">
 
-    <section>
-      <h2 class="title">초대합니다</h2>
-      <p class="text">서로의 가장 좋은 친구가 되어
-같은 방향을 바라보며 걸어가려 합니다.
+    <div class="hero-photo" id="heroPhoto"></div>
 
-소중한 분들을 모시고
-저희의 시작을 함께 나누고 싶습니다.
+    <div class="hero-dim" id="heroDim"></div>
 
-귀한 걸음으로 축복해 주시면
-더없는 기쁨으로 간직하겠습니다.</p>
-    </section>
+    <div class="invite-text" id="inviteText">
+      초대합니다
+    </div>
 
-    <section>
-      <h2 class="title">예식 안내</h2>
-      <div class="info">
-        <div class="row">
-          <div class="label">DATE</div>
-          <div class="value">2026년 6월 27일</div>
-        </div>
-        <div class="row">
-          <div class="label">PLACE</div>
-          <div class="value">아이라이크마운틴</div>
-        </div>
-        <div class="row">
-          <div class="label">ADDRESS</div>
-          <div class="value">경기도 고양시 덕양구 고양대로 2002번길 29</div>
-        </div>
-      </div>
+    <div class="scroll-hint" id="scrollHint">
+      SCROLL
+    </div>
 
-      <div class="btns">
-        <a class="btn" href="https://map.naver.com/p/search/%EA%B2%BD%EA%B8%B0%EB%8F%84%20%EA%B3%A0%EC%96%91%EC%8B%9C%20%EB%8D%95%EC%96%91%EA%B5%AC%20%EA%B3%A0%EC%96%91%EB%8C%80%EB%A1%9C%202002%EB%B2%88%EA%B8%B8%2029" target="_blank" rel="noopener">네이버 지도 보기</a>
-        <button class="btn" onclick="copyAddress()">주소 복사하기</button>
-      </div>
-      <div class="small" id="copyMsg">김정호 · 안젤리카</div>
-    </section>
+  </div>
+</section>
 
-    <footer>
-      2026.06.27<br>
-      Thank you for celebrating with us.
-    </footer>
-  </main>
+<main class="content">
 
-  <script>
-    function copyAddress(){
-      const address='경기도 고양시 덕양구 고양대로 2002번길 29';
-      navigator.clipboard.writeText(address).then(function(){
-        document.getElementById('copyMsg').textContent='주소가 복사되었습니다.';
-      });
-    }
-  </script>
+  <div class="names">
+    김정호 · 안젤리카
+  </div>
+
+  <div class="date">
+    2026년 6월 27일
+  </div>
+
+  <p>
+    서로의 삶에 따뜻한 동행이 되어<br>
+    새로운 시작을 함께하려 합니다.
+  </p>
+
+  <p style="margin-top:20px;">
+    소중한 걸음으로 함께해 주시면<br>
+    더없는 기쁨으로 간직하겠습니다.
+  </p>
+
+  <div class="place">
+    아이라이크마운틴
+  </div>
+
+  <div class="address">
+    경기도 고양시 덕양구 고양대로 2002번길 29
+  </div>
+
+  <a
+    class="button"
+    href="https://map.kakao.com/?q=경기도 고양시 덕양구 고양대로 2002번길 29"
+    target="_blank"
+  >
+    지도 보기
+  </a>
+
+</main>
+
+<script>
+
+const hero = document.getElementById("hero");
+const photo = document.getElementById("heroPhoto");
+const dim = document.getElementById("heroDim");
+const text = document.getElementById("inviteText");
+const hint = document.getElementById("scrollHint");
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function updateHero() {
+
+  const rect = hero.getBoundingClientRect();
+
+  const scrollable =
+    hero.offsetHeight - window.innerHeight;
+
+  const progress =
+    clamp(-rect.top / scrollable, 0, 1);
+
+  const scale = 1 + progress * 0.5;
+
+  photo.style.transform =
+    `scale(${scale})`;
+
+  const textProgress =
+    clamp((progress - 0.45) / 0.35, 0, 1);
+
+  text.style.opacity = textProgress;
+
+  dim.style.background =
+    `rgba(0,0,0,${textProgress * 0.25})`;
+
+  hint.style.opacity =
+    String(1 - progress * 1.8);
+}
+
+window.addEventListener(
+  "scroll",
+  updateHero,
+  { passive: true }
+);
+
+window.addEventListener(
+  "resize",
+  updateHero
+);
+
+updateHero();
+
+</script>
+
 </body>
 </html>
