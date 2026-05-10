@@ -54,9 +54,7 @@ html,body{
 .intro{
   position:relative;
 
-  /* N photos × 160vh — pacing per photo */
-  height:640vh;
-
+  /* height set dynamically by JS: N photos × 80vh */
   background:#000;
 }
 
@@ -207,97 +205,6 @@ html,body{
   letter-spacing:.5em;
   color:rgba(255,255,255,.6);
   text-transform:uppercase;
-}
-
-.hero-scroll{
-  height:200vh;
-  position:relative;
-}
-
-.hero-fixed{
-  position:fixed;
-  inset:0;
-
-  width:100%;
-  height:100vh;
-
-  overflow:hidden;
-
-  z-index:1;
-
-  background:#fffaf6;
-}
-
-.hero-photo{
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
-  object-position:center top;
-
-  transform:scale(1);
-  transform-origin:center top;
-
-  will-change:transform;
-}
-
-.scroll-guide{
-  position:absolute;
-
-  left:50%;
-  bottom:38px;
-
-  transform:
-    translateX(-50%);
-
-  z-index:20;
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-
-  gap:10px;
-
-  color:white;
-
-  opacity:.9;
-
-  animation:
-    bounce 1.8s infinite;
-}
-
-.scroll-guide span{
-  font-size:13px;
-  letter-spacing:.15em;
-}
-
-.arrow{
-  width:14px;
-  height:14px;
-
-  border-right:
-    1.5px solid white;
-
-  border-bottom:
-    1.5px solid white;
-
-  transform:
-    rotate(45deg);
-}
-
-@keyframes bounce{
-
-  0%,100%{
-    transform:
-      translateX(-50%)
-      translateY(0);
-  }
-
-  50%{
-    transform:
-      translateX(-50%)
-      translateY(6px);
-  }
 }
 
 .content{
@@ -678,48 +585,25 @@ html,body{
 
   <div class="intro-sticky">
 
-    <div class="intro-photo">
-      <img src="./run1.jpg" alt="">
-    </div>
-    <div class="intro-photo">
-      <img src="./run2.jpg" alt="">
-    </div>
-    <div class="intro-photo">
-      <img src="./run3.jpg" alt="">
-    </div>
-    <div class="intro-photo">
-      <img src="./run4.jpg" alt="">
-    </div>
+    <div class="intro-photo"><img src="./run_1.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_2.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_3.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_4.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_5.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_6.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_7.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_8.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_9.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_10.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_11.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_12.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_13.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_14.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_15.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_16.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./photo.jpg" alt=""></div>
 
     <div class="intro-dim"></div>
-
-    <div
-      class="intro-hint"
-      id="introHint"
-    >
-      <p>SCROLL</p>
-    </div>
-
-  </div>
-
-</section>
-
-<section
-  class="hero-scroll"
-  id="hero"
->
-
-  <div
-    class="hero-fixed"
-    id="heroFixed"
-  >
-
-    <img
-      src="./photo.jpg"
-      class="hero-photo"
-      id="heroPhoto"
-      alt="wedding photo"
-    >
 
     <div
       class="hero-info"
@@ -757,16 +641,10 @@ html,body{
     </div>
 
     <div
-      class="scroll-guide"
-      id="heroGuide"
+      class="intro-hint"
+      id="introHint"
     >
-
-      <span>
-        아래로 내려주세요
-      </span>
-
-      <div class="arrow"></div>
-
+      <p>SCROLL</p>
     </div>
 
   </div>
@@ -976,29 +854,12 @@ const introHint =
 
 const N_INTRO = introPhotos.length;
 
-const hero =
-  document.getElementById(
-    "hero"
-  );
-
-const heroFixed =
-  document.getElementById(
-    "heroFixed"
-  );
-
-const photo =
-  document.getElementById(
-    "heroPhoto"
-  );
+intro.style.height =
+  `${N_INTRO * 80}vh`;
 
 const heroInfo =
   document.getElementById(
     "heroInfo"
-  );
-
-const heroGuide =
-  document.getElementById(
-    "heroGuide"
   );
 
 function clamp(v,min,max){
@@ -1082,79 +943,27 @@ function updateIntro(){
   /* Scroll hint fades out almost immediately */
   introHint.style.opacity =
     lerp(progress, 0, 0.06, 1, 0);
-}
 
-function updateHero(){
+  /* Wedding info fades in only on the last photo (photo.jpg) */
+  const infoStart =
+    (N_INTRO - 1) * step + step * 0.35;
+  const infoEnd =
+    Math.min(infoStart + step * 0.45, 1);
 
-  const rect =
-    hero.getBoundingClientRect();
+  const infoOp =
+    lerp(progress, infoStart, infoEnd, 0, 1);
 
-  const scrollable =
-    hero.offsetHeight -
-    window.innerHeight;
+  const infoY =
+    lerp(progress, infoStart, infoEnd, 18, 0);
 
-  const progress =
-    clamp(
-      -rect.top / scrollable,
-      0,
-      1
-    );
-
-  photo.style.transform =
-    `scale(${
-      1 + progress * 0.5
-    })`;
-
-  const infoProgress =
-    clamp(
-      (progress - 0.35)
-      / 0.4,
-      0,
-      1
-    );
-
-  heroInfo.style.opacity =
-    infoProgress;
-
+  heroInfo.style.opacity = infoOp;
   heroInfo.style.transform =
-    `translateY(${
-      (1 - infoProgress) * 18
-    }px)`;
-
-  heroGuide.style.opacity =
-    String(
-      1 - progress * 1.8
-    );
-
-  if(progress >= 0.995){
-
-    heroFixed.style.position =
-      "absolute";
-
-    heroFixed.style.top =
-      "auto";
-
-    heroFixed.style.bottom =
-      "0";
-
-  }else{
-
-    heroFixed.style.position =
-      "fixed";
-
-    heroFixed.style.top =
-      "0";
-
-    heroFixed.style.bottom =
-      "auto";
-  }
+    `translateY(${infoY}px)`;
 }
 
 function update(){
 
   updateIntro();
-
-  updateHero();
 
   updateStory();
 }
