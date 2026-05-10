@@ -1,16 +1,41 @@
 <!doctype html>
 <html lang="ko">
 <head>
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>김정호 · 안젤리카 모바일 청첩장</title>
+
+<title>
+  김정호 · 안젤리카 모바일 청첩장
+</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap"
+      rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
 html,body{
   overflow-x:hidden;
-  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Apple SD Gothic Neo",
+    "Noto Sans KR",
+    sans-serif;
+
   background:#fffaf6;
   color:#2f2a26;
 }
@@ -24,22 +49,31 @@ html,body{
 .intro-fixed{
   position:fixed;
   inset:0;
+
   width:100%;
   height:100vh;
+
   overflow:hidden;
+
   z-index:10;
+
   background:#000;
+
   transition:opacity .8s ease;
 }
 
 .intro-img{
   position:absolute;
   inset:0;
+
   width:100%;
   height:100%;
+
   object-fit:cover;
   object-position:center center;
+
   opacity:0;
+
   transition:opacity .35s ease;
 }
 
@@ -55,55 +89,94 @@ html,body{
 .hero-fixed{
   position:fixed;
   inset:0;
+
   width:100%;
   height:100vh;
+
   overflow:hidden;
+
   z-index:1;
+
   background:#fffaf6;
 }
 
 .hero-photo{
   width:100%;
   height:100%;
+
   object-fit:cover;
   object-position:center top;
+
   transform:scale(1);
   transform-origin:center top;
+
   will-change:transform;
 }
 
 .invite-text{
   position:absolute;
+
   left:50%;
   top:50%;
-  transform:translate(-50%, calc(-50% - 150px));
+
+  transform:
+    translate(
+      -50%,
+      calc(-50% - 150px)
+    );
+
   width:100%;
+
   text-align:center;
+
   color:white;
+
   opacity:0;
-  font-size:clamp(34px,8vw,60px);
-  font-weight:300;
-  letter-spacing:0.12em;
-  text-shadow:0 2px 20px rgba(0,0,0,.45);
+
+  font-family:
+    'Nanum Pen Script',
+    cursive;
+
+  font-size:
+    clamp(
+      54px,
+      10vw,
+      88px
+    );
+
+  font-weight:400;
+
+  letter-spacing:0.02em;
+
+  text-shadow:
+    0 2px 20px rgba(0,0,0,.45);
+
   z-index:2;
 }
 
 .scroll-guide{
   position:absolute;
+
   left:50%;
   bottom:38px;
-  transform:translateX(-50%);
+
+  transform:
+    translateX(-50%);
+
   z-index:20;
 
   display:flex;
   flex-direction:column;
   align-items:center;
+
   gap:10px;
 
   color:white;
+
   opacity:.9;
 
-  animation:bounce 1.8s infinite;
+  animation:
+    bounce 1.8s infinite;
 }
 
 .scroll-guide span{
@@ -115,13 +188,18 @@ html,body{
   width:14px;
   height:14px;
 
-  border-right:1.5px solid white;
-  border-bottom:1.5px solid white;
+  border-right:
+    1.5px solid white;
 
-  transform:rotate(45deg);
+  border-bottom:
+    1.5px solid white;
+
+  transform:
+    rotate(45deg);
 }
 
 @keyframes bounce{
+
   0%,100%{
     transform:
       translateX(-50%)
@@ -137,14 +215,20 @@ html,body{
 
 .content{
   position:relative;
+
   z-index:3;
 
   max-width:720px;
+
   margin:0 auto;
 
-  padding:80px 24px 120px;
+  padding:
+    80px
+    24px
+    120px;
 
   text-align:center;
+
   background:#fffaf6;
 
   line-height:1.8;
@@ -152,40 +236,71 @@ html,body{
 
 .names{
   font-size:30px;
+
   letter-spacing:.08em;
+
   margin-bottom:20px;
 }
 
 .date{
   font-size:20px;
+
   color:#7d736b;
+
   margin-bottom:40px;
 }
 
 .place{
   margin-top:36px;
+
   font-size:18px;
 }
 
 .address{
   font-size:15px;
+
   color:#756c64;
 }
+
 </style>
 </head>
 
 <body>
 
-<section class="intro" id="intro">
+<section
+  class="intro"
+  id="intro"
+>
 
-  <div class="intro-fixed" id="introFixed">
+  <div
+    class="intro-fixed"
+    id="introFixed"
+  >
 
-    <img src="./run1.jpg" class="intro-img active">
-    <img src="./run2.jpg" class="intro-img">
-    <img src="./run3.jpg" class="intro-img">
-    <img src="./run4.jpg" class="intro-img">
+    <img
+      src="./run1.jpg"
+      class="intro-img active"
+    >
 
-    <div class="scroll-guide" id="introGuide">
+    <img
+      src="./run2.jpg"
+      class="intro-img"
+    >
+
+    <img
+      src="./run3.jpg"
+      class="intro-img"
+    >
+
+    <img
+      src="./run4.jpg"
+      class="intro-img"
+    >
+
+    <div
+      class="scroll-guide"
+      id="introGuide"
+    >
 
       <span>
         아래로 내려주세요
@@ -199,9 +314,15 @@ html,body{
 
 </section>
 
-<section class="hero-scroll" id="hero">
+<section
+  class="hero-scroll"
+  id="hero"
+>
 
-  <div class="hero-fixed" id="heroFixed">
+  <div
+    class="hero-fixed"
+    id="heroFixed"
+  >
 
     <img
       src="./photo.jpg"
@@ -267,33 +388,52 @@ html,body{
 <script>
 
 const intro =
-  document.getElementById("intro");
+  document.getElementById(
+    "intro"
+  );
 
 const introFixed =
-  document.getElementById("introFixed");
+  document.getElementById(
+    "introFixed"
+  );
 
 const introImgs =
-  document.querySelectorAll(".intro-img");
+  document.querySelectorAll(
+    ".intro-img"
+  );
 
 const introGuide =
-  document.getElementById("introGuide");
+  document.getElementById(
+    "introGuide"
+  );
 
 const hero =
-  document.getElementById("hero");
+  document.getElementById(
+    "hero"
+  );
 
 const heroFixed =
-  document.getElementById("heroFixed");
+  document.getElementById(
+    "heroFixed"
+  );
 
 const photo =
-  document.getElementById("heroPhoto");
+  document.getElementById(
+    "heroPhoto"
+  );
 
 const text =
-  document.getElementById("inviteText");
+  document.getElementById(
+    "inviteText"
+  );
 
 const heroGuide =
-  document.getElementById("heroGuide");
+  document.getElementById(
+    "heroGuide"
+  );
 
 function clamp(v,min,max){
+
   return Math.min(
     Math.max(v,min),
     max
@@ -317,15 +457,22 @@ function updateIntro(){
     );
 
   const imageProgress =
-    clamp(progress / 0.8, 0, 1);
+    clamp(
+      progress / 0.8,
+      0,
+      1
+    );
 
   const index =
     Math.min(
       3,
-      Math.floor(imageProgress * 4)
+      Math.floor(
+        imageProgress * 4
+      )
     );
 
   introImgs.forEach((img,i)=>{
+
     img.classList.toggle(
       "active",
       i === index
@@ -333,19 +480,24 @@ function updateIntro(){
   });
 
   introGuide.style.opacity =
-    String(1 - progress * 1.3);
+    String(
+      1 - progress * 1.3
+    );
 
   if(progress >= 0.8){
 
     const fadeProgress =
       clamp(
-        (progress - 0.8) / 0.2,
+        (progress - 0.8)
+        / 0.2,
         0,
         1
       );
 
     introFixed.style.opacity =
-      String(1 - fadeProgress);
+      String(
+        1 - fadeProgress
+      );
 
     introFixed.style.pointerEvents =
       "none";
@@ -386,11 +538,14 @@ function updateHero(){
     );
 
   photo.style.transform =
-    `scale(${1 + progress * 0.5})`;
+    `scale(${
+      1 + progress * 0.5
+    })`;
 
   const textProgress =
     clamp(
-      (progress - 0.45) / 0.35,
+      (progress - 0.45)
+      / 0.35,
       0,
       1
     );
@@ -399,7 +554,9 @@ function updateHero(){
     textProgress;
 
   heroGuide.style.opacity =
-    String(1 - progress * 1.8);
+    String(
+      1 - progress * 1.8
+    );
 
   if(progress >= 0.995){
 
@@ -426,7 +583,9 @@ function updateHero(){
 }
 
 function update(){
+
   updateIntro();
+
   updateHero();
 }
 
