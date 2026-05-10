@@ -50,140 +50,160 @@ html,body{
   color:#2f2a26;
 }
 
+/* ===== Intro: stacked crossfade + sticky viewport ===== */
 .intro{
-  height:500vh;
   position:relative;
+
+  /* N photos × 160vh — pacing per photo */
+  height:640vh;
+
   background:#000;
 }
 
-.intro-fixed{
-  position:fixed;
-  inset:0;
+.intro-sticky{
+  position:sticky;
+  top:0;
 
   width:100%;
   height:100vh;
+  height:100dvh;
 
   overflow:hidden;
-
-  z-index:10;
-
   background:#000;
-
-  transition:opacity .8s ease;
 }
 
-.intro-img{
+.intro-photo{
   position:absolute;
   inset:0;
 
+  opacity:0;
+  will-change:opacity;
+}
+
+.intro-photo img{
   width:100%;
   height:100%;
 
   object-fit:cover;
-  object-position:center center;
+  object-position:center 40%;
 
-  opacity:0;
+  transform:scale(1.04);
+  transform-origin:center center;
 
-  transition:opacity .35s ease;
+  will-change:transform;
+
+  pointer-events:none;
+  user-select:none;
 }
 
-.intro-img.active{
-  opacity:1;
-}
-
-.intro-overlay{
+.intro-dim{
   position:absolute;
   inset:0;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(0,0,0,0) 30%,
-      rgba(0,0,0,.6) 100%
-    );
-
-  opacity:0;
+  background:rgba(0,0,0,.28);
   pointer-events:none;
 
-  transition:opacity .8s ease;
-
-  z-index:4;
+  z-index:2;
 }
 
-.intro-overlay.active{
-  opacity:1;
-}
-
-.intro-text{
+.intro-info{
   position:absolute;
   inset:0;
 
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-end;
 
-  padding:0 24px;
+  padding-bottom:14%;
 
-  color:white;
   text-align:center;
+  color:#fff;
 
   pointer-events:none;
 
   opacity:0;
-  transform:translateY(14px);
+  transform:translateY(18px);
 
-  transition:
-    opacity .9s ease,
-    transform .9s ease;
-
-  text-shadow:
-    0 2px 16px rgba(0,0,0,.55);
-
-  z-index:5;
+  z-index:3;
 }
 
-.intro-text.active{
-  opacity:1;
-  transform:translateY(0);
+.info-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  gap:18px;
 }
 
-.intro-names{
+.info-eyebrow{
+  font-size:9px;
+  letter-spacing:.55em;
+  color:rgba(255,255,255,.7);
+  text-transform:uppercase;
+}
+
+.info-names{
   font-family:'Gowun Batang',serif;
-  font-weight:400;
+  font-weight:300;
 
   font-size:
-    clamp(30px, 8vw, 50px);
+    clamp(22px, 6.4vw, 30px);
 
   letter-spacing:.12em;
-
-  margin-bottom:22px;
 }
 
-.intro-date{
-  font-size:
-    clamp(14px, 3.8vw, 19px);
-
-  letter-spacing:.22em;
-
-  margin-bottom:10px;
-}
-
-.intro-place{
-  font-size:
-    clamp(13px, 3.4vw, 16px);
-
-  letter-spacing:.06em;
-
-  opacity:.92;
-}
-
-.intro-divider{
-  width:40px;
+.info-divider{
+  width:24px;
   height:1px;
-  background:rgba(255,255,255,.7);
+  background:rgba(255,255,255,.5);
+}
 
-  margin:0 0 22px;
+.info-meta{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.info-date{
+  font-family:'Gowun Batang',serif;
+  font-weight:300;
+
+  font-size:
+    clamp(15px, 4.4vw, 19px);
+
+  letter-spacing:.05em;
+}
+
+.info-place{
+  font-size:11px;
+  letter-spacing:.22em;
+  color:rgba(255,255,255,.78);
+}
+
+.info-address{
+  font-size:10px;
+  letter-spacing:.04em;
+  color:rgba(255,255,255,.55);
+}
+
+.intro-hint{
+  position:absolute;
+  top:40px;
+  left:0;
+  right:0;
+
+  text-align:center;
+  pointer-events:none;
+
+  z-index:3;
+}
+
+.intro-hint p{
+  font-size:8px;
+  letter-spacing:.5em;
+  color:rgba(255,255,255,.6);
+  text-transform:uppercase;
 }
 
 .hero-scroll{
@@ -694,70 +714,63 @@ html,body{
   id="intro"
 >
 
-  <div
-    class="intro-fixed"
-    id="introFixed"
-  >
+  <div class="intro-sticky">
 
-    <img
-      src="./run1.jpg"
-      class="intro-img active"
-    >
+    <div class="intro-photo">
+      <img src="./run1.jpg" alt="">
+    </div>
+    <div class="intro-photo">
+      <img src="./run2.jpg" alt="">
+    </div>
+    <div class="intro-photo">
+      <img src="./run3.jpg" alt="">
+    </div>
+    <div class="intro-photo">
+      <img src="./run4.jpg" alt="">
+    </div>
 
-    <img
-      src="./run2.jpg"
-      class="intro-img"
-    >
-
-    <img
-      src="./run3.jpg"
-      class="intro-img"
-    >
-
-    <img
-      src="./run4.jpg"
-      class="intro-img"
-    >
+    <div class="intro-dim"></div>
 
     <div
-      class="intro-overlay"
-      id="introOverlay"
-    ></div>
-
-    <div
-      class="intro-text"
-      id="introText"
+      class="intro-info"
+      id="introInfo"
     >
+      <div class="info-inner">
 
-      <div class="intro-names">
-        김정호 · 안젤리카
+        <p class="info-eyebrow">
+          SMALL WEDDING
+        </p>
+
+        <p class="info-names">
+          김정호 · 안젤리카
+        </p>
+
+        <div class="info-divider"></div>
+
+        <div class="info-meta">
+
+          <p class="info-date">
+            2026. 06. 27&nbsp;&nbsp;SAT&nbsp;&nbsp;오후 5:00
+          </p>
+
+          <p class="info-place">
+            아이라이크마운틴
+          </p>
+
+          <p class="info-address">
+            경기도 고양시 덕양구 고양대로 2002번길 29
+          </p>
+
+        </div>
+
       </div>
-
-      <div class="intro-divider"></div>
-
-      <div class="intro-date">
-        2026. 06. 27. SAT
-        <br>
-        오후 5시
-      </div>
-
-      <div class="intro-place">
-        아이라이크마운틴
-      </div>
-
     </div>
 
     <div
-      class="scroll-guide"
-      id="introGuide"
+      class="intro-hint"
+      id="introHint"
     >
-
-      <span>
-        아래로 내려주세요
-      </span>
-
-      <div class="arrow"></div>
-
+      <p>SCROLL</p>
     </div>
 
   </div>
@@ -996,30 +1009,22 @@ const intro =
     "intro"
   );
 
-const introFixed =
-  document.getElementById(
-    "introFixed"
-  );
-
-const introImgs =
+const introPhotos =
   document.querySelectorAll(
-    ".intro-img"
+    ".intro-photo"
   );
 
-const introGuide =
+const introInfo =
   document.getElementById(
-    "introGuide"
+    "introInfo"
   );
 
-const introOverlay =
+const introHint =
   document.getElementById(
-    "introOverlay"
+    "introHint"
   );
 
-const introText =
-  document.getElementById(
-    "introText"
-  );
+const N_INTRO = introPhotos.length;
 
 const hero =
   document.getElementById(
@@ -1054,6 +1059,19 @@ function clamp(v,min,max){
   );
 }
 
+function lerp(progress, a, b, from, to){
+
+  if(b <= a){
+    return progress >= a ? to : from;
+  }
+
+  if(progress <= a) return from;
+  if(progress >= b) return to;
+
+  const t = (progress - a) / (b - a);
+  return from + (to - from) * t;
+}
+
 function updateIntro(){
 
   const rect =
@@ -1065,87 +1083,70 @@ function updateIntro(){
 
   const progress =
     clamp(
-      -rect.top / scrollable,
+      -rect.top / Math.max(scrollable, 1),
       0,
       1
     );
 
-  const imageProgress =
-    clamp(
-      progress / 0.8,
-      0,
-      1
-    );
+  const step = 1 / N_INTRO;
 
-  const index =
-    Math.min(
-      3,
-      Math.floor(
-        imageProgress * 4
-      )
-    );
+  introPhotos.forEach((el, i)=>{
 
-  introImgs.forEach((img,i)=>{
+    const isFirst = i === 0;
+    const isLast  = i === N_INTRO - 1;
 
-    img.classList.toggle(
-      "active",
-      i === index
-    );
+    const fadeInStart =
+      isFirst ? 0 : i * step - step * 0.2;
+    const fadeInEnd =
+      isFirst ? 0 : i * step + step * 0.2;
+    const fadeOutStart =
+      isLast ? 1 : (i + 1) * step - step * 0.2;
+    const fadeOutEnd =
+      isLast ? 1 : (i + 1) * step + step * 0.1;
+
+    const opIn = isFirst
+      ? 1
+      : lerp(progress, fadeInStart, fadeInEnd, 0, 1);
+
+    const opOut = isLast
+      ? 1
+      : lerp(progress, fadeOutStart, fadeOutEnd, 1, 0);
+
+    const opacity = Math.min(opIn, opOut);
+
+    el.style.opacity = opacity;
+
+    const photoStart = i * step;
+    const photoEnd =
+      Math.min((i + 1) * step, 1);
+
+    const scale =
+      lerp(progress, photoStart, photoEnd, 1.04, 1.0);
+
+    const img = el.querySelector("img");
+    if(img){
+      img.style.transform = `scale(${scale})`;
+    }
   });
 
-  const onLastFrame =
-    index === introImgs.length - 1;
+  /* Wedding info appears on last photo */
+  const infoStart =
+    (N_INTRO - 1) * step + step * 0.35;
+  const infoEnd =
+    Math.min(infoStart + step * 0.35, 1);
 
-  introOverlay.classList.toggle(
-    "active",
-    onLastFrame
-  );
+  introInfo.style.opacity =
+    lerp(progress, infoStart, infoEnd, 0, 1);
 
-  introText.classList.toggle(
-    "active",
-    onLastFrame
-  );
+  const infoY =
+    lerp(progress, infoStart, infoEnd, 18, 0);
 
-  introGuide.style.opacity =
-    String(
-      1 - progress * 1.3
-    );
+  introInfo.style.transform =
+    `translateY(${infoY}px)`;
 
-  if(progress >= 0.8){
-
-    const fadeProgress =
-      clamp(
-        (progress - 0.8)
-        / 0.2,
-        0,
-        1
-      );
-
-    introFixed.style.opacity =
-      String(
-        1 - fadeProgress
-      );
-
-    introFixed.style.pointerEvents =
-      "none";
-
-  }else{
-
-    introFixed.style.opacity =
-      "1";
-
-    introFixed.style.pointerEvents =
-      "auto";
-  }
-
-  introFixed.style.position =
-    "fixed";
-
-  introFixed.style.top =
-    "0";
-
-  introFixed.style.bottom =
-    "auto";
+  /* Scroll hint fades out almost immediately */
+  introHint.style.opacity =
+    lerp(progress, 0, 0.06, 1, 0);
 }
 
 function updateHero(){
