@@ -81,6 +81,101 @@ html,body{
   opacity:1;
 }
 
+.intro-overlay{
+  position:absolute;
+  inset:0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0) 30%,
+      rgba(0,0,0,.6) 100%
+    );
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:opacity .8s ease;
+
+  z-index:4;
+}
+
+.intro-overlay.active{
+  opacity:1;
+}
+
+.intro-text{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  padding:0 24px;
+
+  color:white;
+  text-align:center;
+
+  pointer-events:none;
+
+  opacity:0;
+  transform:translateY(14px);
+
+  transition:
+    opacity .9s ease,
+    transform .9s ease;
+
+  text-shadow:
+    0 2px 16px rgba(0,0,0,.55);
+
+  z-index:5;
+}
+
+.intro-text.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.intro-names{
+  font-family:'Gowun Batang',serif;
+  font-weight:400;
+
+  font-size:
+    clamp(30px, 8vw, 50px);
+
+  letter-spacing:.12em;
+
+  margin-bottom:22px;
+}
+
+.intro-date{
+  font-size:
+    clamp(14px, 3.8vw, 19px);
+
+  letter-spacing:.22em;
+
+  margin-bottom:10px;
+}
+
+.intro-place{
+  font-size:
+    clamp(13px, 3.4vw, 16px);
+
+  letter-spacing:.06em;
+
+  opacity:.92;
+}
+
+.intro-divider{
+  width:40px;
+  height:1px;
+  background:rgba(255,255,255,.7);
+
+  margin:0 0 22px;
+}
+
 .hero-scroll{
   height:200vh;
   position:relative;
@@ -615,6 +710,34 @@ html,body{
     >
 
     <div
+      class="intro-overlay"
+      id="introOverlay"
+    ></div>
+
+    <div
+      class="intro-text"
+      id="introText"
+    >
+
+      <div class="intro-names">
+        김정호 · 안젤리카
+      </div>
+
+      <div class="intro-divider"></div>
+
+      <div class="intro-date">
+        2026. 06. 27. SAT
+        <br>
+        오후 5시
+      </div>
+
+      <div class="intro-place">
+        아이라이크마운틴
+      </div>
+
+    </div>
+
+    <div
       class="scroll-guide"
       id="introGuide"
     >
@@ -878,6 +1001,16 @@ const introGuide =
     "introGuide"
   );
 
+const introOverlay =
+  document.getElementById(
+    "introOverlay"
+  );
+
+const introText =
+  document.getElementById(
+    "introText"
+  );
+
 const hero =
   document.getElementById(
     "hero"
@@ -949,6 +1082,19 @@ function updateIntro(){
       i === index
     );
   });
+
+  const onLastFrame =
+    index === introImgs.length - 1;
+
+  introOverlay.classList.toggle(
+    "active",
+    onLastFrame
+  );
+
+  introText.classList.toggle(
+    "active",
+    onLastFrame
+  );
 
   introGuide.style.opacity =
     String(
