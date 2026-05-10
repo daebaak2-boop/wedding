@@ -105,6 +105,18 @@ html,body{
 
   overflow:hidden;
   background:#000;
+
+  /* Promote to its own GPU layer + isolate paint, otherwise some
+     mobile browsers (Samsung Internet, older Chromium) repaint the
+     sticky region in two strips during fast scrolling and you see a
+     horizontal seam between the outgoing and incoming photo. */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  will-change:transform;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  contain:layout paint;
+  isolation:isolate;
 }
 
 .intro-photo{
@@ -113,6 +125,13 @@ html,body{
 
   opacity:0;
   will-change:opacity;
+
+  /* Each photo gets its own composited layer too — keeps the
+     crossfade clean and prevents partial repaints. */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
 }
 
 .intro-photo img{
@@ -122,13 +141,11 @@ html,body{
   object-fit:cover;
   object-position:center 40%;
 
-  transform:scale(1.04);
-  transform-origin:center center;
-
-  will-change:transform;
+  display:block;
 
   pointer-events:none;
   user-select:none;
+  -webkit-user-drag:none;
 }
 
 .intro-dim{
@@ -359,7 +376,16 @@ html,body{
   line-height:1.7;
 }
 
-/* ===== Story (boy / girl) ===== */
+/* ===== Story stage (choreographed scroll) =====
+   One sticky viewport with absolutely-positioned actors driven by
+   the section's scroll progress:
+     0.00-0.18  boy fades in centered
+     0.18-0.32  boy slides to left half
+     0.20-0.36  boy bubble fades in above boy
+     0.40-0.58  girl fades in on right half
+     0.62-0.80  girl bubble fades in below girl
+     0.80-1.00  hold all four together
+*/
 .story{
   position:relative;
   z-index:3;
@@ -367,122 +393,161 @@ html,body{
   background:#fffaf6;
 }
 
-.story-section{
+.story-stage-section{
   position:relative;
-  height:200vh;
+  height:500vh;
 }
 
-.story-sticky{
+.story-stage{
   position:sticky;
   top:0;
 
+  width:100%;
   height:100vh;
-  width:100%;
+  height:100dvh;
 
   display:flex;
   align-items:center;
+  justify-content:center;
 
-  padding:0 16px;
+  padding:0 12px;
   overflow:hidden;
+
+  background:#fffaf6;
+
+  /* Same GPU layer trick as the intro to avoid mobile paint seams */
+  transform:translateZ(0);
+  -webkit-transform:translateZ(0);
+  will-change:transform;
+  contain:layout paint;
 }
 
-.story-row{
-  width:100%;
-  max-width:560px;
-  margin:0 auto;
-
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.story-row.left{
-  justify-content:flex-start;
-}
-
-.story-row.right{
-  justify-content:flex-end;
-  flex-direction:row-reverse;
-}
-
-.story-face{
-  flex:0 0 auto;
-
-  width:36vw;
-  max-width:170px;
-  aspect-ratio:3/4;
-
-  object-fit:cover;
-
-  border-radius:14px;
-  box-shadow:
-    0 10px 24px rgba(0,0,0,.16);
-}
-
-.story-bubble{
+.story-canvas{
   position:relative;
 
-  flex:0 1 auto;
-  max-width:60%;
+  width:100%;
+  max-width:480px;
+  height:100%;
+  max-height:680px;
+}
 
+.actor{
+  position:absolute;
+  will-change:transform, opacity;
+}
+
+.actor-photo{
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.16);
+  background:#eee;
+}
+
+.actor-photo img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  pointer-events:none;
+  user-select:none;
+}
+
+.actor-bubble{
   background:#fff;
 
   border-radius:16px;
-  padding:16px 18px;
+  padding:14px 16px;
 
-  font-size:14px;
-  line-height:1.8;
+  font-size:13.5px;
+  line-height:1.75;
   color:#3a322c;
 
   box-shadow:
-    0 6px 18px rgba(0,0,0,.08);
-
-  opacity:0;
-  transform:translateX(-12px) scale(.96);
-
-  transition:
-    opacity .55s ease,
-    transform .55s ease;
+    0 8px 22px rgba(0,0,0,.10);
 }
 
-.story-row.right .story-bubble{
-  transform:translateX(12px) scale(.96);
-}
-
-.story-bubble.show{
-  opacity:1;
-  transform:translateX(0) scale(1);
-}
-
-.story-row.left .story-bubble::before{
-  content:"";
-  position:absolute;
-  left:-9px;
-  top:26px;
-
-  border:9px solid transparent;
-  border-left:0;
-  border-right-color:#fff;
-}
-
-.story-row.right .story-bubble::before{
-  content:"";
-  position:absolute;
-  right:-9px;
-  top:26px;
-
-  border:9px solid transparent;
-  border-right:0;
-  border-left-color:#fff;
-}
-
-.story-name{
+.actor-bubble .actor-name{
   display:block;
   font-family:'Gowun Batang',serif;
-  font-size:12px;
+  font-size:11px;
   color:#a07c5b;
   letter-spacing:.18em;
   margin-bottom:6px;
+}
+
+/* --- Final layout positions (JS interpolates from these for boy)
+   Boy and girl photos sit centered inside their half;
+   bubbles align against the canvas edges, vertically offset above/below
+   their corresponding photo. */
+.boy-photo{
+  width:42%;
+  aspect-ratio:3 / 4;
+
+  top:50%;
+  left:25%;
+  transform:translate(-50%, -50%);
+}
+
+.girl-photo{
+  width:42%;
+  aspect-ratio:3 / 4;
+
+  top:50%;
+  left:75%;
+  transform:translate(-50%, -50%);
+
+  opacity:0;
+}
+
+.boy-bubble{
+  width:62%;
+  max-width:280px;
+
+  /* anchor: bottom edge sits a hair above the photo row */
+  bottom:74%;
+  left:0;
+
+  /* talk-tail towards the boy photo below */
+  position:absolute;
+
+  opacity:0;
+  transform:translateY(8px);
+}
+
+.boy-bubble::after{
+  content:"";
+  position:absolute;
+  bottom:-8px;
+  left:36px;
+
+  border:8px solid transparent;
+  border-bottom:0;
+  border-top-color:#fff;
+}
+
+.girl-bubble{
+  width:62%;
+  max-width:280px;
+
+  top:74%;
+  right:0;
+
+  position:absolute;
+
+  opacity:0;
+  transform:translateY(-8px);
+}
+
+.girl-bubble::after{
+  content:"";
+  position:absolute;
+  top:-8px;
+  right:36px;
+
+  border:8px solid transparent;
+  border-top:0;
+  border-bottom-color:#fff;
 }
 
 /* ===== Gallery + lightbox ===== */
@@ -956,46 +1021,55 @@ html,body{
 
 <section class="story">
 
-  <div class="story-section" id="storyBoy">
-    <div class="story-sticky">
-      <div class="story-row left">
+  <div
+    class="story-stage-section"
+    id="storyStageSection"
+  >
+    <div class="story-stage">
+      <div class="story-canvas">
 
-        <img
-          src="./boy.jpg"
-          class="story-face"
-          alt="신랑 김정호"
+        <div
+          class="actor actor-bubble boy-bubble"
+          id="boyBubble"
         >
-
-        <div class="story-bubble">
-          <span class="story-name">
+          <span class="actor-name">
             신랑 · 김정호
           </span>
           안녕하세요, 신랑 김정호입니다.<br>
-          어릴 적 꿈꿔 온 따뜻한 가정을<br>
-          안젤리카와 함께 만들어 가려 합니다.
+          어릴 적부터 따뜻한 가정을 꿈꿔 왔고,<br>
+          안젤리카와 함께 그 꿈을 이루려 합니다.
         </div>
 
-      </div>
-    </div>
-  </div>
-
-  <div class="story-section" id="storyGirl">
-    <div class="story-sticky">
-      <div class="story-row right">
-
-        <img
-          src="./girl.jpg"
-          class="story-face"
-          alt="신부 안젤리카"
+        <div
+          class="actor actor-photo boy-photo"
+          id="boyPhoto"
         >
+          <img
+            src="./boy.jpg"
+            alt="신랑 김정호"
+          >
+        </div>
 
-        <div class="story-bubble">
-          <span class="story-name">
+        <div
+          class="actor actor-photo girl-photo"
+          id="girlPhoto"
+        >
+          <img
+            src="./girl.jpg"
+            alt="신부 안젤리카"
+          >
+        </div>
+
+        <div
+          class="actor actor-bubble girl-bubble"
+          id="girlBubble"
+        >
+          <span class="actor-name">
             신부 · 안젤리카
           </span>
           안녕하세요, 신부 안젤리카입니다.<br>
-          정호 씨의 다정한 마음에 반해<br>
-          평생의 동반자가 되기로 했어요.
+          정호 씨의 다정함에 마음이 닿아,<br>
+          평생의 동반자로 함께하기로 했어요.
         </div>
 
       </div>
@@ -1315,38 +1389,92 @@ function tickDday(){
 tickDday();
 setInterval(tickDday, 1000);
 
-/* ===== Story scroll-driven bubble reveal ===== */
-const storySections =
-  document.querySelectorAll(".story-section");
+/* ===== Story stage choreography =====
+   Stages over the scroll progress p (0 -> 1):
+     0.00-0.18  boy fades in centered  (left:50%, scale 1.05 -> 1)
+     0.18-0.32  boy slides to left half (left:50% -> 25%)
+     0.20-0.36  boy bubble fades in above boy
+     0.40-0.58  girl fades in on right half
+     0.62-0.80  girl bubble fades in below girl
+     0.80-1.00  hold all four together
+*/
+const storyStageSection =
+  document.getElementById("storyStageSection");
+const boyPhotoEl =
+  document.getElementById("boyPhoto");
+const girlPhotoEl =
+  document.getElementById("girlPhoto");
+const boyBubbleEl =
+  document.getElementById("boyBubble");
+const girlBubbleEl =
+  document.getElementById("girlBubble");
 
 function updateStory(){
-  storySections.forEach((sec)=>{
 
-    const rect =
-      sec.getBoundingClientRect();
+  if(!storyStageSection) return;
 
-    const scrollable =
-      sec.offsetHeight -
-      window.innerHeight;
+  const rect =
+    storyStageSection.getBoundingClientRect();
 
-    const progress =
-      clamp(
-        -rect.top / Math.max(scrollable,1),
-        0,
-        1
-      );
+  const scrollable =
+    storyStageSection.offsetHeight -
+    window.innerHeight;
 
-    const bubble =
-      sec.querySelector(".story-bubble");
+  const p =
+    clamp(
+      -rect.top / Math.max(scrollable, 1),
+      0,
+      1
+    );
 
-    if(!bubble) return;
+  /* --- boy photo --- */
+  const boyOpacity =
+    lerp(p, 0.00, 0.12, 0, 1);
 
-    if(progress > 0.25){
-      bubble.classList.add("show");
-    }else{
-      bubble.classList.remove("show");
-    }
-  });
+  /* boy starts centered (left 50%, larger), then slides
+     to the left half (left 25%) and shrinks slightly. */
+  const boyLeftPct =
+    lerp(p, 0.18, 0.32, 50, 25);
+
+  const boyWidthPct =
+    lerp(p, 0.18, 0.32, 56, 42);
+
+  boyPhotoEl.style.opacity = boyOpacity;
+  boyPhotoEl.style.left = `${boyLeftPct}%`;
+  boyPhotoEl.style.width = `${boyWidthPct}%`;
+
+  /* --- boy bubble: fade in above boy after he settles --- */
+  const boyBubbleP =
+    lerp(p, 0.20, 0.36, 0, 1);
+
+  const boyBubbleEased =
+    boyBubbleP * boyBubbleP * (3 - 2 * boyBubbleP);
+
+  boyBubbleEl.style.opacity = boyBubbleEased;
+  boyBubbleEl.style.transform =
+    `translateY(${(1 - boyBubbleEased) * 12}px)`;
+
+  /* --- girl photo: appear on right half --- */
+  const girlP =
+    lerp(p, 0.40, 0.58, 0, 1);
+
+  const girlEased =
+    girlP * girlP * (3 - 2 * girlP);
+
+  girlPhotoEl.style.opacity = girlEased;
+  girlPhotoEl.style.transform =
+    `translate(-50%, calc(-50% + ${(1 - girlEased) * 14}px))`;
+
+  /* --- girl bubble: fade in below girl --- */
+  const girlBubbleP =
+    lerp(p, 0.62, 0.80, 0, 1);
+
+  const girlBubbleEased =
+    girlBubbleP * girlBubbleP * (3 - 2 * girlBubbleP);
+
+  girlBubbleEl.style.opacity = girlBubbleEased;
+  girlBubbleEl.style.transform =
+    `translateY(${(1 - girlBubbleEased) * -12}px)`;
 }
 
 update();
