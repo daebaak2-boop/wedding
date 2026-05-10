@@ -908,31 +908,23 @@ function updateIntro(){
 
     const isFirst = i === 0;
 
-    /* Each photo fades in over a short range and stays at 1.
-       Previous photos stay fully opaque underneath, so there's
-       never a black gap between transitions. */
+    /* Wider fade-in window + ease curve for a smoother crossfade.
+       Previous photos stay at opacity 1 underneath, so the next
+       photo simply blends in from 0 -> 1 on top of them. */
     const fadeInStart =
-      isFirst ? 0 : i * step - step * 0.15;
+      isFirst ? 0 : i * step - step * 0.35;
     const fadeInEnd =
-      isFirst ? 0 : i * step + step * 0.15;
+      isFirst ? 0 : i * step + step * 0.35;
 
-    const opacity = isFirst
+    const linear = isFirst
       ? 1
       : lerp(progress, fadeInStart, fadeInEnd, 0, 1);
 
-    el.style.opacity = opacity;
+    /* smoothstep easing */
+    const eased =
+      linear * linear * (3 - 2 * linear);
 
-    const photoStart = i * step;
-    const photoEnd =
-      Math.min((i + 1) * step, 1);
-
-    const scale =
-      lerp(progress, photoStart, photoEnd, 1.04, 1.0);
-
-    const img = el.querySelector("img");
-    if(img){
-      img.style.transform = `scale(${scale})`;
-    }
+    el.style.opacity = eased;
   });
 
   /* Scroll hint fades out almost immediately */
