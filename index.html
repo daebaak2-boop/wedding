@@ -37,7 +37,10 @@
 }
 
 html,body{
+  /* hidden falls back if the browser does not support clip;
+     clip avoids creating a scroll container so position:sticky works. */
   overflow-x:hidden;
+  overflow-x:clip;
 
   font-family:
     -apple-system,
