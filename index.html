@@ -585,7 +585,7 @@ html,body{
 
   <div class="intro-sticky">
 
-    <div class="intro-photo"><img src="./run_1.jpg" alt=""></div>
+    <div class="intro-photo" style="opacity:1"><img src="./run_1.jpg" alt="" fetchpriority="high"></div>
     <div class="intro-photo"><img src="./run_2.jpg" alt=""></div>
     <div class="intro-photo"><img src="./run_3.jpg" alt=""></div>
     <div class="intro-photo"><img src="./run_4.jpg" alt=""></div>
@@ -904,26 +904,18 @@ function updateIntro(){
   introPhotos.forEach((el, i)=>{
 
     const isFirst = i === 0;
-    const isLast  = i === N_INTRO - 1;
 
+    /* Each photo fades in over a short range and stays at 1.
+       Previous photos stay fully opaque underneath, so there's
+       never a black gap between transitions. */
     const fadeInStart =
-      isFirst ? 0 : i * step - step * 0.2;
+      isFirst ? 0 : i * step - step * 0.15;
     const fadeInEnd =
-      isFirst ? 0 : i * step + step * 0.2;
-    const fadeOutStart =
-      isLast ? 1 : (i + 1) * step - step * 0.2;
-    const fadeOutEnd =
-      isLast ? 1 : (i + 1) * step + step * 0.1;
+      isFirst ? 0 : i * step + step * 0.15;
 
-    const opIn = isFirst
+    const opacity = isFirst
       ? 1
       : lerp(progress, fadeInStart, fadeInEnd, 0, 1);
-
-    const opOut = isLast
-      ? 1
-      : lerp(progress, fadeOutStart, fadeOutEnd, 1, 0);
-
-    const opacity = Math.min(opIn, opOut);
 
     el.style.opacity = opacity;
 
