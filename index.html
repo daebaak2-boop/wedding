@@ -152,7 +152,16 @@ html,body{
   position:absolute;
   inset:0;
 
-  background:rgba(0,0,0,.28);
+  /* Soft bottom-only gradient — photos look bright at the top, and
+     the area where the names/date overlay sits gets a gentle dim
+     for text legibility. */
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 55%,
+      rgba(0,0,0,.45) 100%
+    );
+
   pointer-events:none;
 
   z-index:2;
@@ -895,6 +904,12 @@ html,body{
     <div class="intro-photo"><img src="./run_final_8.jpg" alt=""></div>
     <div class="intro-photo"><img src="./run_final_9.jpg" alt=""></div>
     <div class="intro-photo"><img src="./run_final_10.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_final_11.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_final_12.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_final_13.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_final_14.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_final_15.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run_final_16.jpg" alt=""></div>
     <div class="intro-photo"><img src="./photo.jpg" alt=""></div>
 
     <div class="intro-dim"></div>
