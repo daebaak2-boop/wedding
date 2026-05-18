@@ -1,1 +1,1170 @@
-<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wedding Live Preview</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#e8e2dc;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;color:#2f2a26}body{display:flex;align-items:flex-start;justify-content:center;padding:24px 10px}.preview-shell{width:min(100%,430px)}.preview-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 auto 14px;padding:0 4px;font-weight:800;font-size:17px}.reload-btn{border:0;border-radius:999px;background:#2f2a26;color:#fffaf6;padding:10px 16px;font:inherit;font-size:13px;cursor:pointer}.phone{position:relative;width:min(100%,393px);height:min(852px,calc(100vh - 72px));margin:0 auto;background:#fffaf6;overflow-y:auto;overflow-x:hidden;border-radius:0;box-shadow:0 24px 70px rgba(0,0,0,.18);overscroll-behavior:contain}.status-bar{position:sticky;top:0;z-index:50;height:54px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 37px;font-size:20px;font-weight:800;color:#000;letter-spacing:-.03em}.status-icons{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:800}.signal{display:flex;align-items:flex-end;gap:2px;height:16px}.signal i{display:block;width:4px;background:#000;border-radius:4px}.signal i:nth-child(1){height:7px}.signal i:nth-child(2){height:10px}.signal i:nth-child(3){height:13px}.battery{background:#101010;color:#fff;border-radius:8px;padding:2px 7px;line-height:1;font-size:14px}section{position:relative}.hero{height:300vh;background:#000}.sticky-screen{position:sticky;top:54px;height:calc(100vh - 54px);min-height:710px;overflow:hidden;background:#000}.hero-photo{position:absolute;inset:0;opacity:0;background-size:cover;background-position:center;transition:opacity 1.8s ease-in}.hero-photo.run{opacity:1;background-image:url('https://daebaak2-boop.github.io/wedding/run_1.jpg')}.hero-photo.photo{background-image:url('https://daebaak2-boop.github.io/wedding/photo.jpg')}.hero.is-photo .hero-photo.photo{opacity:1;transition-duration:3.8s}.scroll-guide{position:absolute;left:0;right:0;bottom:30px;z-index:4;display:flex;flex-direction:column;align-items:center;gap:10px;color:rgba(255,255,255,.72);font-size:18px;font-weight:500;text-shadow:0 2px 14px rgba(0,0,0,.55);transition:opacity .35s}.chev{width:18px;height:18px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}.hero-info{position:absolute;left:22px;right:22px;bottom:88px;z-index:5;color:#fff;text-align:center;opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s;text-shadow:0 3px 18px rgba(0,0,0,.55)}.hero.show-info .hero-info{opacity:1;transform:translateY(0)}.hero-info .names{font-size:24px;letter-spacing:.08em;margin-bottom:16px}.hero-info .meta{font-size:14px;line-height:1.85;color:rgba(255,255,255,.86)}.plain-section{min-height:calc(100vh - 54px);display:flex;align-items:center;justify-content:center;padding:70px 22px;text-align:center;line-height:1.9;background:#fffaf6}.plain-card{width:100%}.plain-card h1{font-size:25px;margin:0 0 18px;letter-spacing:.05em}.plain-card p{font-size:16px;margin:0;color:#645b54}.count-box{width:100%;border-top:1px solid #e8ded5;border-bottom:1px solid #e8ded5;padding:45px 0}.count-title{font-size:15px;letter-spacing:.22em;color:#a07c5b;margin-bottom:28px;font-weight:700}.count-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.count-num{font-size:30px;font-weight:800}.count-label{margin-top:4px;font-size:10px;color:#92867b;letter-spacing:.12em}.count-msg{margin-top:24px;color:#746a62;font-size:15px}.letters{background:#fffaf6}.letter-scene{height:260vh;position:relative;background:#fffaf6}.letter-sticky{position:sticky;top:54px;height:calc(100vh - 54px);min-height:710px;display:flex;align-items:center;justify-content:center;padding:0 10px;overflow:hidden}.letter-layout{position:relative;width:100%;display:flex;align-items:flex-start;gap:12px;opacity:0;transform:translateY(14px);transition:opacity .55s,transform .55s}.letter-layout.visible{opacity:1;transform:translateY(0)}.letter-layout.boy{flex-direction:row-reverse}.letter-layout.girl{flex-direction:row}.face{width:116px;aspect-ratio:1/1.42;object-fit:cover;border-radius:10px;box-shadow:0 14px 28px rgba(0,0,0,.15);flex:0 0 auto}.bubbles{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;gap:12px;opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s}.bubbles.visible{opacity:1;transform:translateY(0)}.bubble{position:relative;width:fit-content;max-width:100%;padding:11px 16px;background:#fff;border-radius:17px;color:#1f1b18;font-weight:600;font-size:17px;line-height:1.65;letter-spacing:-.04em;box-shadow:0 10px 26px rgba(0,0,0,.09)}.boy .bubbles{align-items:flex-start}.girl .bubbles{align-items:flex-end}.girl .bubble{text-align:left}.boy .bubble:first-child:after{content:"";position:absolute;top:0;right:-13px;width:23px;height:24px;background:#fff;clip-path:polygon(0 0,100% 0,0 100%)}.girl .bubble:first-child:after{content:"";position:absolute;top:0;left:-13px;width:23px;height:24px;background:#fff;clip-path:polygon(0 0,100% 0,100% 100%)}.location-scene{height:220vh;background:#fffaf6}.location-sticky{position:sticky;top:54px;height:calc(100vh - 54px);min-height:710px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fffaf6}.location-card,.count-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s}.location-card.visible,.count-overlay.visible{opacity:1;transform:translateY(0)}.location-img{width:100%;max-width:350px;border-radius:0;display:block;box-shadow:0 18px 42px rgba(0,0,0,.13);margin-bottom:26px}.loc-copy{font-size:18px;line-height:1.8;font-weight:700}.loc-address{margin-top:12px;color:#786e66;font-size:14px;line-height:1.65}@media(max-width:420px){body{padding:0}.preview-shell{width:100%}.preview-top{display:none}.phone{width:100vw;height:100vh;box-shadow:none}.sticky-screen,.letter-sticky,.location-sticky{min-height:calc(100vh - 54px)}}</style></head><body><div class="preview-shell"><div class="preview-top"><span>Wedding Live Preview</span><button class="reload-btn" type="button" onclick="location.reload()">최신 코드 다시 불러오기</button></div><main class="phone" id="phone"><div class="status-bar"><div>10:33</div><div class="status-icons"><span class="signal"><i></i><i></i><i></i></span><span>⌁</span><span class="battery">37</span></div></div><section class="hero" id="hero"><div class="sticky-screen"><div class="hero-photo run"></div><div class="hero-photo photo"></div><div class="hero-info"><div class="names">김정호 · 안젤리카</div><div class="meta">2026년 6월 27일 토요일 오후 5시<br>아이라이크마운틴</div></div><div class="scroll-guide"><span>아래로 내려주세요</span><span class="chev"></span></div></div></section><section class="plain-section"><div class="plain-card"><h1>저희 결혼합니다</h1><p>소중한 분들을 모시고<br>따뜻한 하루를 함께 나누고 싶습니다.</p></div></section><section class="letters"><div class="letter-scene"><div class="letter-sticky"><div class="letter-layout boy"><div class="bubbles"><div class="bubble">안녕하세요 정호예요.</div><div class="bubble">‘아이 하나를 키우는 데는<br>온 마을이 필요하다’라는 말이 있죠.</div><div class="bubble">저 역시 온 가족의 사랑 속에서 자라,<br>어느새 장가 갈 준비를 하고 있어요. 고맙습니다.</div><div class="bubble">곧 인사드릴게요.</div></div><img class="face" src="https://daebaak2-boop.github.io/wedding/boy.jpg" alt=""></div></div></div><div class="letter-scene"><div class="letter-sticky"><div class="letter-layout girl"><img class="face" src="https://daebaak2-boop.github.io/wedding/girl.jpg" alt=""><div class="bubbles"><div class="bubble">안녕하세요 엔지입니다.</div><div class="bubble">가족분들과 처음으로 함께하게 되어<br>정말 기쁘고 기대돼요.</div><div class="bubble">편안한 분위기 속에서 가족 모두가 함께 축하하고,<br>기쁨과 사랑을 가득 나누는 시간이 되었으면 좋겠습니다.</div></div></div></div></div><div class="letter-scene"><div class="letter-sticky"><div class="letter-layout boy"><div class="bubbles"><div class="bubble">멀리서 와주시는 걸음이<br>얼마나 큰 마음인지 알고 있어요.</div><div class="bubble">오시는 길이 불편하지 않도록<br>조심히 준비해둘게요.</div></div><img class="face" src="https://daebaak2-boop.github.io/wedding/boy.jpg" alt=""></div></div></div><div class="letter-scene"><div class="letter-sticky"><div class="letter-layout girl"><img class="face" src="https://daebaak2-boop.github.io/wedding/girl.jpg" alt=""><div class="bubbles"><div class="bubble">그날은 거창하기보다<br>가까운 사람들과 따뜻하게 보내고 싶어요.</div><div class="bubble">함께 웃고, 사진도 남기고,<br>오래 기억할 수 있는 하루가 되면 좋겠습니다.</div></div></div></div></div></section><section class="location-scene" id="locationScene"><div class="location-sticky"><div class="location-card"><img class="location-img" src="https://daebaak2-boop.github.io/wedding/location.jpg" alt="아이라이크마운틴 외관"><div class="loc-copy">아래의 주소로 와주세요.</div><div class="loc-address">경기도 고양시 덕양구 고양대로 2002번길 29<br>아이라이크마운틴</div></div><div class="count-overlay"><div class="count-box"><div class="count-title">우리의 결혼식까지</div><div class="count-grid"><div><div class="count-num" id="days">--</div><div class="count-label">일</div></div><div><div class="count-num" id="hours">--</div><div class="count-label">시간</div></div><div><div class="count-num" id="mins">--</div><div class="count-label">분</div></div><div><div class="count-num" id="secs">--</div><div class="count-label">초</div></div></div><div class="count-msg">남았습니다</div></div></div></div></section></main></div><script>const phone=document.getElementById('phone'),hero=document.getElementById('hero'),locationScene=document.getElementById('locationScene'),letterScenes=Array.from(document.querySelectorAll('.letter-scene'));function clamp(v,min,max){return Math.min(Math.max(v,min),max)}function progressIn(el){const sr=phone.getBoundingClientRect(),r=el.getBoundingClientRect(),stickyTop=54,scrollable=Math.max(el.offsetHeight-(phone.clientHeight-stickyTop),1);return clamp((sr.top+stickyTop-r.top)/scrollable,0,1)}function updateHero(){const p=progressIn(hero);hero.classList.toggle('is-photo',p>.56);hero.classList.toggle('show-info',p>.82);hero.querySelector('.scroll-guide').style.opacity=p>.12?'0':'1'}function updateLetters(){letterScenes.forEach(scene=>{const p=progressIn(scene),layout=scene.querySelector('.letter-layout'),bubbles=scene.querySelector('.bubbles');layout.classList.toggle('visible',p>.12&&p<.92);bubbles.classList.toggle('visible',p>.42&&p<.86)})}function updateLocation(){const p=progressIn(locationScene),loc=locationScene.querySelector('.location-card'),count=locationScene.querySelector('.count-overlay');loc.classList.toggle('visible',p>.08&&p<.58);count.classList.toggle('visible',p>=.68)}function updateAll(){updateHero();updateLetters();updateLocation()}phone.addEventListener('scroll',updateAll,{passive:true});window.addEventListener('resize',updateAll);updateAll();const target=new Date('2026-06-27T17:00:00+09:00').getTime();function pad(n){return String(n).padStart(2,'0')}function tick(){const diff=Math.max(target-Date.now(),0),sec=Math.floor(diff/1000),d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60),s=sec%60;document.getElementById('days').textContent=d;document.getElementById('hours').textContent=pad(h);document.getElementById('mins').textContent=pad(m);document.getElementById('secs').textContent=pad(s)}tick();setInterval(tick,1000);</script></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>
+  김정호 · 김엔지 모바일 청첩장
+</title>
+<!-- 카카오톡 / SNS 공유 미리보기 -->
+
+<meta property="og:type"
+      content="website">
+
+<meta property="og:title"
+      content="김정호 · 김엔지 결혼합니다">
+
+<meta property="og:description"
+      content="2026년 6월 27일 · 아이라이크마운틴">
+
+<meta property="og:image"
+      content="https://daeabaak2-boop.github.io/wedding/thumbnail.jpg">
+
+<meta property="og:image:secure_url"
+      content="https://daeabaak2-boop.github.io/wedding/thumbnail.jpg">
+
+<meta property="og:image:type"
+      content="image/jpeg">
+
+<meta property="og:image:width"
+      content="1200">
+
+<meta property="og:image:height"
+      content="630">
+
+<meta property="og:url"
+      content="https://daeabaak2-boop.github.io/wedding/">
+
+<meta property="og:site_name"
+      content="김정호 · 김엔지 모바일 청첩장">
+
+<meta name="twitter:card"
+      content="summary_large_image">
+
+<meta name="twitter:image"
+      content="https://daeabaak2-boop.github.io/wedding/thumbnail.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gowun+Batang:wght@400;700&display=swap"
+      rel="stylesheet">
+<link rel="stylesheet"
+      href="https://unpkg.com/@kfonts/nanum-handwritting-eonggeongkwiche/index.css">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,body{
+  /* hidden falls back if the browser does not support clip;
+     clip avoids creating a scroll container so position:sticky works. */
+  overflow-x:hidden;
+  overflow-x:clip;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Apple SD Gothic Neo",
+    "Noto Sans KR",
+    sans-serif;
+
+  background:#fffaf6;
+  color:#2f2a26;
+}
+
+/* ===== Intro: stacked crossfade + sticky viewport ===== */
+.intro{
+  position:relative;
+
+  /* height set dynamically by JS */
+  background:#fffaf6;
+}
+
+.intro-sticky{
+  position:sticky;
+  top:0;
+
+  width:100%;
+  height:100vh;
+  height:100dvh;
+
+  overflow:hidden;
+  background:#fffaf6;
+}
+
+.intro-photo{
+  position:absolute;
+  inset:0;
+
+  opacity:0;
+  will-change:opacity;
+}
+
+.intro-photo img{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+  object-position:center 40%;
+
+  transform:scale(1.04);
+  transform-origin:center center;
+
+  will-change:transform;
+
+  pointer-events:none;
+  user-select:none;
+}
+
+.intro-dim{
+  position:absolute;
+  inset:0;
+
+  background:transparent;
+  pointer-events:none;
+
+  z-index:2;
+}
+
+.hero-info{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+
+  padding-bottom:14%;
+
+  text-align:center;
+  color:#fff;
+
+  pointer-events:none;
+
+  opacity:0;
+  transform:translateY(18px);
+
+  z-index:3;
+
+  text-shadow:
+    0 2px 16px rgba(0,0,0,.5);
+}
+
+.info-inner{
+  position:relative;
+  width:100%;
+  min-height:160px;
+}
+
+.info-eyebrow{
+  position:absolute;
+  top:-50px;
+  left:50%;
+  width:100%;
+  transform:translateX(-50%);
+
+  font-family:"나눔손글씨 엉겅퀴체","나눔손글씨엉겅퀴체","nanum-handwritting-eonggeongkwiche",cursive;
+  font-size:
+    clamp(42px, 12vw, 55px);
+  letter-spacing:0;
+  color:#fff;
+  text-transform:none;
+  opacity:0;
+}
+
+.info-details{
+  position:absolute;
+  top:-40px;
+  left:50%;
+  width:100%;
+  transform:translateX(-50%);
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
+  opacity:0;
+}
+
+.info-names{
+  font-family:'Gowun Batang',serif;
+  font-weight:300;
+
+  font-size:
+    clamp(22px, 6.4vw, 30px);
+
+  letter-spacing:.12em;
+}
+
+.info-divider{
+  width:24px;
+  height:1px;
+  background:rgba(255,255,255,.5);
+}
+
+.info-meta{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.info-date{
+  font-family:'Gowun Batang',serif;
+  font-weight:300;
+
+  font-size:
+    clamp(15px, 4.4vw, 19px);
+
+  letter-spacing:.05em;
+}
+
+.info-place{
+  font-size:
+    clamp(10px, 2.8vw, 13px);
+  letter-spacing:.22em;
+  color:rgba(255,255,255,.78);
+}
+
+.info-address{
+  font-size:
+    clamp(9px, 2.5vw, 12px);
+  letter-spacing:.04em;
+  color:rgba(255,255,255,.55);
+}
+
+.info-place + .info-address{
+  font-size:
+    clamp(10px, 2.8vw, 13px);
+  letter-spacing:.22em;
+  color:rgba(255,255,255,.78);
+}
+
+.intro-hint{
+  position:absolute;
+  top:40px;
+  left:0;
+  right:0;
+
+  text-align:center;
+  pointer-events:none;
+
+  z-index:3;
+}
+
+.intro-hint p{
+  font-size:8px;
+  letter-spacing:.5em;
+  color:rgba(255,255,255,.6);
+  text-transform:uppercase;
+}
+
+.content{
+  position:relative;
+
+  z-index:3;
+
+  max-width:720px;
+
+  margin:0 auto;
+
+  padding:
+    80px
+    24px
+    80px;
+
+  text-align:center;
+
+  background:#fffaf6;
+
+  line-height:1.8;
+}
+
+.names{
+  font-size:30px;
+
+  letter-spacing:.08em;
+
+  margin-bottom:20px;
+}
+
+.date{
+  font-size:20px;
+
+  color:#7d736b;
+
+  margin-bottom:40px;
+}
+
+.place{
+  margin-top:36px;
+
+  font-size:18px;
+}
+
+.address{
+  font-size:15px;
+
+  color:#756c64;
+}
+
+/* ===== D-day countdown ===== */
+.dday{
+  position:relative;
+  z-index:3;
+
+  background:#fffaf6;
+
+  padding:0 24px 100px;
+
+  text-align:center;
+}
+
+.dday-inner{
+  max-width:560px;
+  margin:0 auto;
+
+  border-top:1px solid #e9dfd4;
+  border-bottom:1px solid #e9dfd4;
+
+  padding:48px 16px;
+}
+
+.dday-title{
+  font-family:'Gowun Batang',serif;
+  font-size:18px;
+  letter-spacing:.2em;
+  color:#a07c5b;
+
+  margin-bottom:28px;
+}
+
+.dday-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.dday-cell{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+}
+
+.dday-num{
+  font-family:'Gowun Batang',serif;
+  font-size:32px;
+  font-weight:700;
+  color:#2f2a26;
+
+  min-width:48px;
+}
+
+.dday-label{
+  font-size:12px;
+  color:#9a8e80;
+  letter-spacing:.15em;
+}
+
+.dday-msg{
+  margin-top:24px;
+  font-size:15px;
+  color:#7d736b;
+  line-height:1.7;
+}
+
+/* ===== Story (boy / girl) ===== */
+.story{
+  position:relative;
+  z-index:3;
+
+  background:#fffaf6;
+}
+
+.story-section{
+  position:relative;
+  height:200vh;
+}
+
+.story-sticky{
+  position:sticky;
+  top:0;
+
+  height:100vh;
+  width:100%;
+
+  display:flex;
+  align-items:center;
+
+  padding:0 16px;
+  overflow:hidden;
+}
+
+.story-row{
+  width:100%;
+  max-width:560px;
+  margin:0 auto;
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.story-row.left{
+  justify-content:flex-start;
+}
+
+.story-row.right{
+  justify-content:flex-end;
+  flex-direction:row-reverse;
+}
+
+.story-face{
+  flex:0 0 auto;
+
+  width:36vw;
+  max-width:170px;
+  aspect-ratio:3/4;
+
+  object-fit:cover;
+
+  border-radius:14px;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.16);
+
+  opacity:0;
+  transform:translateY(18px);
+
+  transition:
+    opacity .65s ease,
+    transform .65s ease;
+}
+
+.story-face.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.story-bubble{
+  position:relative;
+
+  flex:0 1 auto;
+  max-width:60%;
+
+  background:#fff;
+
+  border-radius:16px;
+  padding:16px 18px;
+
+  font-size:14px;
+  line-height:1.8;
+  color:#3a322c;
+
+  box-shadow:
+    0 6px 18px rgba(0,0,0,.08);
+
+  opacity:0;
+  transform:translateX(-12px) scale(.96);
+
+  transition:
+    opacity .55s ease,
+    transform .55s ease;
+}
+
+.story-row.right .story-bubble{
+  transform:translateX(12px) scale(.96);
+}
+
+.story-bubble.show{
+  opacity:1;
+  transform:translateX(0) scale(1);
+}
+
+.story-row.left .story-bubble::before{
+  content:"";
+  position:absolute;
+  left:-9px;
+  top:26px;
+
+  border:9px solid transparent;
+  border-left:0;
+  border-right-color:#fff;
+}
+
+.story-row.right .story-bubble::before{
+  content:"";
+  position:absolute;
+  right:-9px;
+  top:26px;
+
+  border:9px solid transparent;
+  border-right:0;
+  border-left-color:#fff;
+}
+
+.story-name{
+  display:block;
+  font-family:'Gowun Batang',serif;
+  font-size:12px;
+  color:#a07c5b;
+  letter-spacing:.18em;
+  margin-bottom:6px;
+}
+
+</style>
+</head>
+
+<body>
+
+<section
+  class="intro"
+  id="intro"
+>
+
+  <div class="intro-sticky">
+
+    <div class="intro-photo" style="opacity:1"><img src="./run1.jpg" alt="" fetchpriority="high"></div>
+    <div class="intro-photo"><img src="./run2.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run3.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run4.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run5.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run6.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run7.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run8.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run9.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run10.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run11.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run12.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run13.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./run14.jpg" alt=""></div>
+    <div class="intro-photo"><img src="./photo.jpg" alt=""></div>
+
+    <div class="intro-dim"></div>
+
+    <div
+      class="hero-info"
+      id="heroInfo"
+    >
+      <div class="info-inner">
+
+        <p class="info-eyebrow">
+          저희와 함께해 주세요.
+        </p>
+
+        <div class="info-details">
+
+          <p class="info-names">
+            김정호 · 김엔지
+          </p>
+
+          <div class="info-divider"></div>
+
+          <div class="info-meta">
+
+            <p class="info-date">
+              2026. 06. 27&nbsp;&nbsp;토요일&nbsp;&nbsp;오후 5:00
+            </p>
+
+            <p class="info-place">
+              경기도 고양시 덕양구 고양대로 2002번길 29
+            </p>
+
+            <p class="info-address">
+              아이라이크마운틴
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div
+      class="intro-hint"
+      id="introHint"
+    >
+      <p>SCROLL</p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="story">
+
+  <div class="story-section" id="storyBoy">
+    <div class="story-sticky">
+      <div class="story-row left">
+
+        <img
+          src="./boy.jpg"
+          class="story-face"
+          alt="신랑 김정호"
+        >
+
+        <div class="story-bubble">
+          안녕하세요, 신랑 김정호입니다.<br>
+          어릴 적 꿈꿔 온 따뜻한 가정을<br>
+          엔지와 함께 만들어 가려 합니다.
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="story-section" id="storyGirl">
+    <div class="story-sticky">
+      <div class="story-row right">
+
+        <img
+          src="./girl.jpg"
+          class="story-face"
+          alt="신부 김엔지"
+        >
+
+        <div class="story-bubble">
+          안녕하세요, 신부 김엔지입니다.<br>
+          정호 씨의 다정한 마음에 반해<br>
+          평생의 동반자가 되기로 했어요.
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<section class="dday">
+  <div class="dday-inner">
+
+    <div class="dday-title">
+      OUR WEDDING DAY
+    </div>
+
+    <div class="dday-grid">
+      <div class="dday-cell">
+        <div class="dday-num" id="ddayDays">--</div>
+        <div class="dday-label">DAYS</div>
+      </div>
+      <div class="dday-cell">
+        <div class="dday-num" id="ddayHours">--</div>
+        <div class="dday-label">HOURS</div>
+      </div>
+      <div class="dday-cell">
+        <div class="dday-num" id="ddayMins">--</div>
+        <div class="dday-label">MIN</div>
+      </div>
+      <div class="dday-cell">
+        <div class="dday-num" id="ddaySecs">--</div>
+        <div class="dday-label">SEC</div>
+      </div>
+    </div>
+
+    <div class="dday-msg" id="ddayMsg">
+      정호 ♡ 엔지의 결혼식이<br>
+      <strong id="ddayCount">--</strong>일 남았습니다.
+    </div>
+
+  </div>
+</section>
+
+<script>
+
+const intro =
+  document.getElementById(
+    "intro"
+  );
+
+const introPhotos =
+  document.querySelectorAll(
+    ".intro-photo"
+  );
+
+const introHint =
+  document.getElementById(
+    "introHint"
+  );
+
+const N_INTRO = introPhotos.length;
+const TEXT_SEQUENCE_TRIGGER = 0.74;
+const TEXT_FADE_MS = 450;
+const GREETING_HOLD_MS = 500;
+const DETAILS_HOLD_MS = 500;
+const GREETING_SCROLL_FADE = 0.08;
+const INTRO_OUTRO_FADE_MS = 450;
+const FINAL_PHOTO_FADE_PX = 500;
+let introTextState = "idle";
+let introTextStateStartedAt = 0;
+let greetingOutStartProgress = 0;
+let detailsBrakeActive = false;
+
+intro.style.height =
+  `${N_INTRO * 40 + 150}vh`;
+
+const heroInfo =
+  document.getElementById(
+    "heroInfo"
+  );
+
+const infoEyebrow =
+  document.querySelector(
+    ".info-eyebrow"
+  );
+
+const infoDetails =
+  document.querySelector(
+    ".info-details"
+  );
+
+function getIntroProgress(){
+  const rect =
+    intro.getBoundingClientRect();
+
+  const scrollable =
+    intro.offsetHeight -
+    window.innerHeight;
+
+  return clamp(
+    -rect.top / Math.max(scrollable, 1),
+    0,
+    1
+  );
+}
+
+function shouldBlockIntroTextAdvance(){
+  return introTextState === "greetingHold" ||
+    introTextState === "detailsHold" ||
+    introTextState === "introOutro";
+}
+
+function startIntroTextSequenceIfNeeded(){
+  if(introTextState === "idle"){
+    setIntroTextState("greetingIn");
+  }
+}
+
+function blockDetailsBrakeScroll(event){
+  if(introTextState === "done"){
+    setIntroTextState("introOutro");
+    event.preventDefault();
+    return;
+  }
+
+  if(!shouldBlockIntroTextAdvance()) return;
+
+  startIntroTextSequenceIfNeeded();
+  event.preventDefault();
+}
+
+function blockDetailsBrakeKeys(event){
+  const scrollKeys = [
+    " ",
+    "ArrowDown",
+    "ArrowUp",
+    "PageDown",
+    "PageUp",
+    "Home",
+    "End",
+  ];
+
+  if(!scrollKeys.includes(event.key)) return;
+  if(introTextState === "done"){
+    setIntroTextState("introOutro");
+    event.preventDefault();
+    return;
+  }
+
+  if(!shouldBlockIntroTextAdvance()) return;
+
+  startIntroTextSequenceIfNeeded();
+  event.preventDefault();
+}
+
+function clamp(v,min,max){
+
+  return Math.min(
+    Math.max(v,min),
+    max
+  );
+}
+
+function lerp(progress, a, b, from, to){
+
+  if(b <= a){
+    return progress >= a ? to : from;
+  }
+
+  if(progress <= a) return from;
+  if(progress >= b) return to;
+
+  const t = (progress - a) / (b - a);
+  return from + (to - from) * t;
+}
+
+function smoothstep(t){
+  return t * t * (3 - 2 * t);
+}
+
+function setIntroTextState(nextState){
+  introTextState = nextState;
+  introTextStateStartedAt = performance.now();
+  if(nextState === "greetingOut"){
+    greetingOutStartProgress = getIntroProgress();
+  }
+  detailsBrakeActive =
+    nextState !== "idle" &&
+    nextState !== "done";
+  requestAnimationFrame(update);
+}
+
+function updateIntro(){
+
+  const rect =
+    intro.getBoundingClientRect();
+
+  const scrollable =
+    intro.offsetHeight -
+    window.innerHeight;
+
+  let progress =
+    clamp(
+      -rect.top / Math.max(scrollable, 1),
+      0,
+      1
+    );
+
+  const introTop =
+    window.scrollY + rect.top;
+  const photoStep = 0.72 / N_INTRO;
+  const finalPhotoIndex = N_INTRO - 1;
+  const finalPhotoFadeStart =
+    finalPhotoIndex * photoStep - photoStep * 0.35;
+  const finalPhotoFadeEnd =
+    finalPhotoFadeStart +
+    FINAL_PHOTO_FADE_PX / Math.max(scrollable, 1);
+  const textSequenceTrigger =
+    Math.min(finalPhotoFadeEnd + 0.005, 0.86);
+  const sequenceGateY =
+    introTop + scrollable * textSequenceTrigger;
+
+  if(
+    progress >= textSequenceTrigger &&
+    introTextState === "idle"
+  ){
+    setIntroTextState("greetingIn");
+  }
+
+  if(
+    progress >= textSequenceTrigger &&
+    (
+      introTextState === "greetingIn" ||
+      introTextState === "greetingHold" ||
+      introTextState === "detailsIn" ||
+      introTextState === "detailsHold" ||
+      introTextState === "introOutro"
+    )
+  ){
+    window.scrollTo(0, sequenceGateY);
+    progress = textSequenceTrigger;
+  }
+
+  /* Scroll hint fades out almost immediately */
+  introHint.style.opacity =
+    lerp(progress, 0, 0.06, 1, 0);
+
+  introPhotos.forEach((el, i)=>{
+
+    const isFirst = i === 0;
+
+    /* Wider fade-in window + ease curve for a smoother crossfade.
+       Previous photos stay at opacity 1 underneath, so the next
+       photo simply blends in from 0 -> 1 on top of them. */
+    const isFinalPhoto = i === finalPhotoIndex;
+
+    const fadeInStart =
+      isFirst ? 0 :
+        isFinalPhoto ? finalPhotoFadeStart :
+        i * photoStep - photoStep * 0.35;
+    const fadeInEnd =
+      isFirst ? 0 :
+        isFinalPhoto ? finalPhotoFadeEnd :
+        i * photoStep + photoStep * 0.35;
+
+    const linear = isFirst
+      ? 1
+      : lerp(progress, fadeInStart, fadeInEnd, 0, 1);
+
+    el.style.opacity =
+      smoothstep(linear);
+  });
+
+  if(progress < textSequenceTrigger - 0.04){
+    introTextState = "idle";
+    introTextStateStartedAt = 0;
+    detailsBrakeActive = false;
+  }
+
+  const now = performance.now();
+  const elapsed =
+    introTextStateStartedAt
+      ? now - introTextStateStartedAt
+      : 0;
+
+  let greetingOp = 0;
+  let detailsOp = 0;
+
+  if(introTextState === "greetingIn"){
+    const t =
+      clamp(elapsed / TEXT_FADE_MS, 0, 1);
+
+    greetingOp = smoothstep(t);
+
+    if(t >= 1){
+      setIntroTextState("greetingHold");
+      greetingOp = 1;
+    }else{
+      requestAnimationFrame(update);
+    }
+  }else if(introTextState === "greetingHold"){
+    greetingOp = 1;
+
+    if(elapsed >= GREETING_HOLD_MS){
+      setIntroTextState("greetingOut");
+    }else{
+      requestAnimationFrame(update);
+    }
+  }else if(introTextState === "greetingOut"){
+    const t =
+      clamp(
+        (progress - greetingOutStartProgress) /
+          GREETING_SCROLL_FADE,
+        0,
+        1
+      );
+
+    greetingOp = 1 - smoothstep(t);
+
+    if(t >= 1){
+      setIntroTextState("detailsIn");
+      greetingOp = 0;
+    }
+  }else if(introTextState === "detailsIn"){
+    const t =
+      clamp(elapsed / TEXT_FADE_MS, 0, 1);
+
+    detailsOp = smoothstep(t);
+
+    if(t >= 1){
+      setIntroTextState("detailsHold");
+      detailsOp = 1;
+    }else{
+      requestAnimationFrame(update);
+    }
+  }else if(introTextState === "detailsHold"){
+    detailsOp = 1;
+
+    if(elapsed >= DETAILS_HOLD_MS){
+      setIntroTextState("done");
+      detailsOp = 1;
+    }else{
+      requestAnimationFrame(update);
+    }
+  }else if(introTextState === "done"){
+    detailsOp = 1;
+  }else if(introTextState === "introOutro"){
+    detailsOp = 1;
+  }else if(introTextState === "finished"){
+    detailsOp = 1;
+  }
+
+  let introOutroOp = 1;
+
+  if(introTextState === "introOutro"){
+    const t =
+      clamp(
+        elapsed / INTRO_OUTRO_FADE_MS,
+        0,
+        1
+      );
+
+    introOutroOp = 1 - smoothstep(t);
+
+    if(t >= 1){
+      setIntroTextState("finished");
+      introOutroOp = 0;
+      window.scrollTo(0, introTop + scrollable + 1);
+    }
+  }else if(introTextState === "finished"){
+    introOutroOp = 0;
+  }
+
+  const infoY =
+    introTextState === "idle"
+      ? 18
+      : 0;
+
+  heroInfo.style.opacity =
+    Math.max(greetingOp, detailsOp);
+  infoEyebrow.style.opacity = greetingOp;
+  infoDetails.style.opacity = detailsOp;
+  heroInfo.style.transform =
+    `translateY(${infoY}px)`;
+  document.querySelector(".intro-sticky").style.opacity =
+    introOutroOp;
+}
+
+function update(){
+
+  updateIntro();
+
+  updateStory();
+}
+
+window.addEventListener(
+  "scroll",
+  update,
+  {passive:true}
+);
+
+window.addEventListener(
+  "wheel",
+  blockDetailsBrakeScroll,
+  {passive:false}
+);
+
+window.addEventListener(
+  "touchmove",
+  blockDetailsBrakeScroll,
+  {passive:false}
+);
+
+window.addEventListener(
+  "keydown",
+  blockDetailsBrakeKeys
+);
+
+window.addEventListener(
+  "resize",
+  update
+);
+
+/* ===== D-day countdown ===== */
+const weddingTs =
+  new Date(
+    "2026-06-27T17:00:00+09:00"
+  ).getTime();
+
+const ddayDays =
+  document.getElementById("ddayDays");
+const ddayHours =
+  document.getElementById("ddayHours");
+const ddayMins =
+  document.getElementById("ddayMins");
+const ddaySecs =
+  document.getElementById("ddaySecs");
+const ddayCount =
+  document.getElementById("ddayCount");
+const ddayMsg =
+  document.getElementById("ddayMsg");
+
+function pad(n){
+  return String(n).padStart(2,"0");
+}
+
+function tickDday(){
+
+  const now = Date.now();
+  const diff = weddingTs - now;
+
+  if(diff <= 0){
+    ddayDays.textContent = "00";
+    ddayHours.textContent = "00";
+    ddayMins.textContent = "00";
+    ddaySecs.textContent = "00";
+    ddayMsg.innerHTML =
+      "오늘은 정호 ♡ 엔지의 결혼식 날입니다.";
+    return;
+  }
+
+  const sec =
+    Math.floor(diff / 1000);
+
+  const days =
+    Math.floor(sec / 86400);
+  const hours =
+    Math.floor((sec % 86400) / 3600);
+  const mins =
+    Math.floor((sec % 3600) / 60);
+  const secs =
+    sec % 60;
+
+  ddayDays.textContent = pad(days);
+  ddayHours.textContent = pad(hours);
+  ddayMins.textContent = pad(mins);
+  ddaySecs.textContent = pad(secs);
+
+  if(ddayCount){
+    ddayCount.textContent = days;
+  }
+}
+
+tickDday();
+setInterval(tickDday, 1000);
+
+/* ===== Story scroll-driven bubble reveal ===== */
+const storySections =
+  document.querySelectorAll(".story-section");
+
+function updateStory(){
+  storySections.forEach((sec)=>{
+
+    const rect =
+      sec.getBoundingClientRect();
+
+    const scrollable =
+      sec.offsetHeight -
+      window.innerHeight;
+
+    const progress =
+      clamp(
+        -rect.top / Math.max(scrollable,1),
+        0,
+        1
+      );
+
+    const bubble =
+      sec.querySelector(".story-bubble");
+    const face =
+      sec.querySelector(".story-face");
+
+    if(!bubble || !face) return;
+
+    if(progress > 0.25){
+      face.classList.add("show");
+      bubble.classList.add("show");
+    }else{
+      face.classList.remove("show");
+      bubble.classList.remove("show");
+    }
+  });
+}
+
+update();
+
+</script>
+
+</body>
+</html>
