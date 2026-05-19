@@ -731,14 +731,15 @@ const GREETING_HOLD_MS = 500;
 const DETAILS_HOLD_MS = 1000;
 const GREETING_SCROLL_FADE = 0.08;
 const INTRO_OUTRO_FADE_MS = 450;
-const FINAL_PHOTO_FADE_PX = 500;
+const FINAL_PHOTO_FADE_PX = 1200;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let greetingOutStartProgress = 0;
 let detailsBrakeActive = false;
+let introHasFinished = false;
 
 intro.style.height =
-  `${N_INTRO * 40 + 150}vh`;
+  `calc(${N_INTRO * 40 + 150}vh + ${FINAL_PHOTO_FADE_PX}px)`;
 
 const heroInfo =
   document.getElementById(
@@ -884,7 +885,11 @@ function updateIntro(){
   const run4VisibleAt =
     3 * photoStep + photoStep * 0.35;
   const textSequenceTrigger =
-    Math.min(finalPhotoFadeEnd + 0.005, 0.86);
+    Math.min(finalPhotoFadeEnd + 0.005, 0.995);
+  const visualProgress =
+    introHasFinished && progress < 0.999
+      ? Math.max(progress, textSequenceTrigger)
+      : progress;
   const sequenceGateY =
     introTop + scrollable * textSequenceTrigger;
 
@@ -910,7 +915,9 @@ function updateIntro(){
   }
 
   introHint.style.opacity =
-    lerp(progress, run4VisibleAt, run4VisibleAt + photoStep * 0.45, 1, 0);
+    introHasFinished
+      ? 0
+      : lerp(progress, run4VisibleAt, run4VisibleAt + photoStep * 0.45, 1, 0);
 
   introPhotos.forEach((el, i)=>{
 
@@ -932,13 +939,16 @@ function updateIntro(){
 
     const linear = isFirst
       ? 1
-      : lerp(progress, fadeInStart, fadeInEnd, 0, 1);
+      : lerp(visualProgress, fadeInStart, fadeInEnd, 0, 1);
 
     el.style.opacity =
       smoothstep(linear);
   });
 
-  if(progress < textSequenceTrigger - 0.04){
+  if(
+    !introHasFinished &&
+    progress < textSequenceTrigger - 0.04
+  ){
     introTextState = "idle";
     introTextStateStartedAt = 0;
     detailsBrakeActive = false;
@@ -1031,11 +1041,14 @@ function updateIntro(){
 
     if(t >= 1){
       setIntroTextState("finished");
+      introHasFinished = true;
       introOutroOp = 0;
       window.scrollTo(0, introTop + scrollable + 1);
+    }else{
+      requestAnimationFrame(update);
     }
   }else if(introTextState === "finished"){
-    introOutroOp = 0;
+    introOutroOp = progress < 0.999 ? 1 : 0;
   }
 
   const infoY =
