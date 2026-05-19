@@ -252,21 +252,46 @@ html,body{
 
 .intro-hint{
   position:absolute;
-  top:40px;
   left:0;
   right:0;
+  bottom:34px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
 
   text-align:center;
   pointer-events:none;
 
   z-index:3;
+  animation:introHintFloat 1.6s ease-in-out infinite;
 }
 
 .intro-hint p{
-  font-size:8px;
-  letter-spacing:.5em;
-  color:rgba(255,255,255,.6);
-  text-transform:uppercase;
+  font-size:13px;
+  letter-spacing:.08em;
+  color:#fff;
+  text-shadow:0 2px 12px rgba(0,0,0,.35);
+}
+
+.intro-arrow{
+  width:14px;
+  height:14px;
+  border-right:2px solid #fff;
+  border-bottom:2px solid #fff;
+  transform:rotate(45deg);
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.35));
+}
+
+@keyframes introHintFloat{
+  0%,
+  100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(10px);
+  }
 }
 
 .content{
@@ -595,7 +620,8 @@ html,body{
       class="intro-hint"
       id="introHint"
     >
-      <p>SCROLL</p>
+      <p>아래로 내려주세요</p>
+      <span class="intro-arrow" aria-hidden="true"></span>
     </div>
 
   </div>
@@ -702,7 +728,7 @@ const N_INTRO = introPhotos.length;
 const TEXT_SEQUENCE_TRIGGER = 0.74;
 const TEXT_FADE_MS = 450;
 const GREETING_HOLD_MS = 500;
-const DETAILS_HOLD_MS = 500;
+const DETAILS_HOLD_MS = 1000;
 const GREETING_SCROLL_FADE = 0.08;
 const INTRO_OUTRO_FADE_MS = 450;
 const FINAL_PHOTO_FADE_PX = 500;
@@ -855,6 +881,8 @@ function updateIntro(){
   const finalPhotoFadeEnd =
     finalPhotoFadeStart +
     FINAL_PHOTO_FADE_PX / Math.max(scrollable, 1);
+  const run4VisibleAt =
+    3 * photoStep + photoStep * 0.35;
   const textSequenceTrigger =
     Math.min(finalPhotoFadeEnd + 0.005, 0.86);
   const sequenceGateY =
@@ -881,9 +909,8 @@ function updateIntro(){
     progress = textSequenceTrigger;
   }
 
-  /* Scroll hint fades out almost immediately */
   introHint.style.opacity =
-    lerp(progress, 0, 0.06, 1, 0);
+    lerp(progress, run4VisibleAt, run4VisibleAt + photoStep * 0.45, 1, 0);
 
   introPhotos.forEach((el, i)=>{
 
