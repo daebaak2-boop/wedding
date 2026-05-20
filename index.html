@@ -450,6 +450,10 @@ html,body{
   justify-content:flex-start;
 }
 
+#storyBoy .story-row{
+  gap:10px;
+}
+
 .story-row.right{
   justify-content:flex-end;
   flex-direction:row-reverse;
@@ -470,6 +474,7 @@ html,body{
 
   opacity:0;
   transform:translateY(18px);
+  transform-origin:left center;
 
   transition:
     opacity .65s ease,
@@ -479,6 +484,10 @@ html,body{
 .story-face.show{
   opacity:1;
   transform:translateY(0);
+}
+
+#storyBoy .story-face.shrink{
+  transform:translateY(0) scale(.6);
 }
 
 .story-bubble{
@@ -536,6 +545,86 @@ html,body{
   border:9px solid transparent;
   border-right:0;
   border-left-color:#fff;
+}
+
+#storyBoy .story-bubble{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+
+  width:var(--boy-bubble-width, auto);
+  max-width:none;
+  padding:0;
+
+  background:transparent;
+  border-radius:0;
+  box-shadow:none;
+
+  font-size:13px;
+  line-height:1.65;
+
+  opacity:1;
+  transform:
+    translateX(var(--boy-bubble-x, 0px))
+    translateY(var(--boy-bubble-y, 0px))
+    scale(1);
+  transition:none;
+}
+
+#storyBoy .story-bubble.show{
+  transform:
+    translateX(var(--boy-bubble-x, 0px))
+    translateY(var(--boy-bubble-y, 0px))
+    scale(1);
+}
+
+#storyBoy .story-bubble::before{
+  display:none;
+}
+
+#storyBoy .story-message{
+  position:relative;
+  display:block;
+
+  width:max-content;
+  max-width:100%;
+
+  padding:10px 14px;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.06);
+
+  opacity:0;
+  transform:translateX(-12px) scale(.96);
+  transition:
+    opacity .55s ease,
+    transform .55s ease;
+
+  color:#2f2a26;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+
+#storyBoy .story-message.show{
+  opacity:1;
+  transform:translateX(0) scale(1);
+}
+
+#storyBoy .story-message:first-child::before{
+  content:"";
+  position:absolute;
+  left:-9px;
+  top:4px;
+
+  width:18px;
+  height:18px;
+
+  background:#fff;
+  border-top-left-radius:18px;
+  clip-path:polygon(0 0, 100% 0, 100% 100%);
+  transform:rotate(-8deg);
 }
 
 .story-name{
@@ -642,9 +731,10 @@ html,body{
         >
 
         <div class="story-bubble">
-          안녕하세요, 신랑 김정호입니다.<br>
-          어릴 적 꿈꿔 온 따뜻한 가정을<br>
-          엔지와 함께 만들어 가려 합니다.
+          <span class="story-message">안녕하세요 정호예요.</span>
+          <span class="story-message">‘아이 하나를 키우는 데는 온 마을이 필요하다’라는 말이 있죠.</span>
+          <span class="story-message">저 역시 온 가족의 사랑 속에서 자라, 어느새 장가 갈 준비를 하고 있어요. 고맙습니다.</span>
+          <span class="story-message">곧 인사드릴게요.</span>
         </div>
 
       </div>
@@ -732,11 +822,114 @@ const DETAILS_HOLD_MS = 1000;
 const GREETING_SCROLL_FADE = 0.08;
 const INTRO_OUTRO_FADE_MS = 450;
 const FINAL_PHOTO_FADE_PX = 1200;
+const INTRO_TO_STORY_GAP_PX = 800;
+const STORY_FACE_FADE_MS = 650;
+const BOY_SHRINK_HOLD_MS = 200;
+const BOY_BUBBLE_GAP_PX = 10;
+const STORY_MESSAGE_STAGGER_MS = 360;
+const STORY_MESSAGE_FADE_MS = 550;
+const BOY_MESSAGE_HOLD_MS = 1000;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let greetingOutStartProgress = 0;
 let detailsBrakeActive = false;
 let introHasFinished = false;
+let boySequenceStartedAt = 0;
+let boySequenceDone = false;
+let boyBrakeLockY = 0;
+let boyScrollLockActive = false;
+
+function alignBoyBubbleToFace(face, bubble){
+  const faceRect =
+    face.getBoundingClientRect();
+  const firstMessage =
+    bubble.querySelector(".story-message");
+
+  if(!firstMessage) return;
+
+  const tailStyle =
+    getComputedStyle(firstMessage, "::before");
+  const tailLeft =
+    Number(tailStyle.left.replace("px", "")) || 0;
+  const desiredBubbleLeft =
+    faceRect.right +
+    BOY_BUBBLE_GAP_PX -
+    tailLeft;
+  const desiredRight =
+    window.innerWidth - faceRect.left;
+  const bubbleWidth =
+    Math.max(
+      120,
+      desiredRight - desiredBubbleLeft
+    );
+
+  bubble.style.setProperty(
+    "--boy-bubble-x",
+    "0px"
+  );
+  bubble.style.setProperty(
+    "--boy-bubble-y",
+    "0px"
+  );
+  bubble.style.setProperty(
+    "--boy-bubble-width",
+    `${bubbleWidth}px`
+  );
+
+  const baseBubbleLeft =
+    bubble.getBoundingClientRect().left;
+  const baseBubbleTop =
+    bubble.getBoundingClientRect().top;
+  const bubbleX =
+    desiredBubbleLeft - baseBubbleLeft;
+  const bubbleY =
+    faceRect.top - baseBubbleTop;
+
+  bubble.style.setProperty(
+    "--boy-bubble-x",
+    `${bubbleX}px`
+  );
+  bubble.style.setProperty(
+    "--boy-bubble-y",
+    `${bubbleY}px`
+  );
+}
+
+function resetBoyBubbleAlignment(bubble){
+  bubble.style.removeProperty("--boy-bubble-x");
+  bubble.style.removeProperty("--boy-bubble-y");
+  bubble.style.removeProperty("--boy-bubble-width");
+}
+
+function resetBoyMessages(bubble){
+  bubble
+    .querySelectorAll(".story-message")
+    .forEach((message)=>{
+      message.classList.remove("show");
+    });
+}
+
+function startBoyBrake(lockY){
+  boyBrakeLockY = lockY;
+  boyScrollLockActive = true;
+  holdBoyBrakePosition();
+}
+
+function holdBoyBrakePosition(){
+  window.scrollTo(0, boyBrakeLockY);
+}
+
+function stopBoyBrake(){
+  boyScrollLockActive = false;
+}
+
+function resetBoySequence(bubble){
+  resetBoyMessages(bubble);
+  resetBoyBubbleAlignment(bubble);
+  boySequenceStartedAt = 0;
+  boySequenceDone = false;
+  stopBoyBrake();
+}
 
 intro.style.height =
   `calc(${N_INTRO * 40 + 150}vh + ${FINAL_PHOTO_FADE_PX}px)`;
@@ -784,6 +977,18 @@ function startIntroTextSequenceIfNeeded(){
 }
 
 function blockDetailsBrakeScroll(event){
+  if(
+    boyScrollLockActive ||
+    (
+      boySequenceStartedAt &&
+      !boySequenceDone
+    )
+  ){
+    holdBoyBrakePosition();
+    event.preventDefault();
+    return;
+  }
+
   if(introTextState === "done"){
     setIntroTextState("introOutro");
     event.preventDefault();
@@ -808,6 +1013,18 @@ function blockDetailsBrakeKeys(event){
   ];
 
   if(!scrollKeys.includes(event.key)) return;
+  if(
+    boyScrollLockActive ||
+    (
+      boySequenceStartedAt &&
+      !boySequenceDone
+    )
+  ){
+    holdBoyBrakePosition();
+    event.preventDefault();
+    return;
+  }
+
   if(introTextState === "done"){
     setIntroTextState("introOutro");
     event.preventDefault();
@@ -1043,7 +1260,19 @@ function updateIntro(){
       setIntroTextState("finished");
       introHasFinished = true;
       introOutroOp = 0;
-      window.scrollTo(0, introTop + scrollable + 1);
+      const storyBoy =
+        document.getElementById("storyBoy");
+      const storyBoyTop =
+        storyBoy.getBoundingClientRect().top +
+        window.scrollY;
+      const storyBoyShowY =
+        storyBoyTop +
+        (storyBoy.offsetHeight - window.innerHeight) * 0.25;
+
+      window.scrollTo(
+        0,
+        storyBoyShowY - INTRO_TO_STORY_GAP_PX
+      );
     }else{
       requestAnimationFrame(update);
     }
@@ -1169,6 +1398,8 @@ const storySections =
   document.querySelectorAll(".story-section");
 
 function updateStory(){
+  const now = performance.now();
+
   storySections.forEach((sec)=>{
 
     const rect =
@@ -1184,6 +1415,10 @@ function updateStory(){
         0,
         1
       );
+    const sectionTop =
+      window.scrollY + rect.top;
+    const revealY =
+      sectionTop + scrollable * 0.25 + 1;
 
     const bubble =
       sec.querySelector(".story-bubble");
@@ -1193,11 +1428,80 @@ function updateStory(){
     if(!bubble || !face) return;
 
     if(progress > 0.25){
-      face.classList.add("show");
-      bubble.classList.add("show");
+      if(sec.id === "storyBoy"){
+        if(!boySequenceStartedAt){
+          boySequenceStartedAt = now;
+          boySequenceDone = false;
+          startBoyBrake(revealY);
+        }
+
+        if(!boySequenceDone){
+          holdBoyBrakePosition();
+        }
+
+        face.classList.add("show");
+
+        const elapsed =
+          now - boySequenceStartedAt;
+        const shrinkAt =
+          STORY_FACE_FADE_MS + BOY_SHRINK_HOLD_MS;
+        const messagesAt =
+          shrinkAt + STORY_FACE_FADE_MS;
+        const messages =
+          bubble.querySelectorAll(".story-message");
+        const messagesCompleteAt =
+          messagesAt +
+          (messages.length - 1) *
+            STORY_MESSAGE_STAGGER_MS +
+          STORY_MESSAGE_FADE_MS;
+        const releaseAt =
+          messagesCompleteAt + BOY_MESSAGE_HOLD_MS;
+
+        if(elapsed >= shrinkAt){
+          face.classList.add("shrink");
+          alignBoyBubbleToFace(face, bubble);
+        }else{
+          face.classList.remove("shrink");
+          resetBoyBubbleAlignment(bubble);
+        }
+
+        if(elapsed >= messagesAt){
+          bubble.classList.add("show");
+
+          messages.forEach((message, i)=>{
+            if(
+              elapsed >=
+              messagesAt + i * STORY_MESSAGE_STAGGER_MS
+            ){
+              message.classList.add("show");
+            }else{
+              message.classList.remove("show");
+            }
+          });
+        }else{
+          bubble.classList.remove("show");
+          resetBoyMessages(bubble);
+        }
+
+        if(elapsed >= releaseAt){
+          boySequenceDone = true;
+          stopBoyBrake();
+        }else{
+          requestAnimationFrame(update);
+        }
+      }else{
+        face.classList.add("show");
+        bubble.classList.add("show");
+      }
     }else{
       face.classList.remove("show");
+      face.classList.remove("shrink");
       bubble.classList.remove("show");
+      resetBoyBubbleAlignment(bubble);
+
+      if(sec.id === "storyBoy"){
+        resetBoySequence(bubble);
+      }
     }
   });
 }
