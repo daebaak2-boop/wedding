@@ -422,6 +422,10 @@ html,body{
   height:200vh;
 }
 
+#storyBoy{
+  height:calc(100vh + 389px);
+}
+
 .story-sticky{
   position:sticky;
   top:0;
@@ -450,13 +454,14 @@ html,body{
   justify-content:flex-start;
 }
 
-#storyBoy .story-row{
+#storyBoy .story-row,
+#storyGirl .story-row{
   gap:10px;
 }
 
 .story-row.right{
   justify-content:flex-end;
-  flex-direction:row-reverse;
+  flex-direction:row;
 }
 
 .story-face{
@@ -490,10 +495,18 @@ html,body{
   transform:translateY(0) scale(.6);
 }
 
+#storyGirl .story-face{
+  transform-origin:right center;
+}
+
+#storyGirl .story-face.shrink{
+  transform:translateY(0) scale(.6);
+}
+
 .story-bubble{
   position:relative;
 
-  flex:0 1 auto;
+  flex:0 0 var(--boy-bubble-width, 0px);
   max-width:60%;
 
   background:#fff;
@@ -547,13 +560,15 @@ html,body{
   border-left-color:#fff;
 }
 
-#storyBoy .story-bubble{
+#storyBoy .story-bubble,
+#storyGirl .story-bubble{
   display:flex;
   flex-direction:column;
   align-items:flex-start;
   gap:8px;
 
-  width:var(--boy-bubble-width, auto);
+  width:var(--boy-bubble-width, 0px);
+  min-width:0;
   max-width:none;
   padding:0;
 
@@ -572,18 +587,25 @@ html,body{
   transition:none;
 }
 
-#storyBoy .story-bubble.show{
+#storyGirl .story-bubble{
+  align-items:flex-end;
+}
+
+#storyBoy .story-bubble.show,
+#storyGirl .story-bubble.show{
   transform:
     translateX(var(--boy-bubble-x, 0px))
     translateY(var(--boy-bubble-y, 0px))
     scale(1);
 }
 
-#storyBoy .story-bubble::before{
+#storyBoy .story-bubble::before,
+#storyGirl .story-bubble::before{
   display:none;
 }
 
-#storyBoy .story-message{
+#storyBoy .story-message,
+#storyGirl .story-message{
   position:relative;
   display:block;
 
@@ -607,7 +629,12 @@ html,body{
   overflow-wrap:break-word;
 }
 
-#storyBoy .story-message.show{
+#storyGirl .story-message{
+  transform:translateX(12px) scale(.96);
+}
+
+#storyBoy .story-message.show,
+#storyGirl .story-message.show{
   opacity:1;
   transform:translateX(0) scale(1);
 }
@@ -625,6 +652,21 @@ html,body{
   border-top-left-radius:18px;
   clip-path:polygon(0 0, 100% 0, 100% 100%);
   transform:rotate(-8deg);
+}
+
+#storyGirl .story-message:first-child::before{
+  content:"";
+  position:absolute;
+  right:-9px;
+  top:4px;
+
+  width:18px;
+  height:18px;
+
+  background:#fff;
+  border-top-right-radius:18px;
+  clip-path:polygon(0 0, 100% 0, 0 100%);
+  transform:rotate(8deg);
 }
 
 .story-name{
@@ -745,17 +787,18 @@ html,body{
     <div class="story-sticky">
       <div class="story-row right">
 
+        <div class="story-bubble">
+          <span class="story-message">안녕하세요 엔지입니다.</span>
+          <span class="story-message">가족분들과 처음으로 함께하게 되어 정말 기쁘고 기대돼요.</span>
+          <span class="story-message">편안한 분위기 속에서 가족 모두가 함께 축하하고, 기쁨과 사랑을 가득 나누는 시간이 되었으면 좋겠습니다.</span>
+          <span class="story-message">반가운 얼굴로 만나뵐게요.</span>
+        </div>
+
         <img
           src="./girl.jpg"
           class="story-face"
           alt="신부 김엔지"
         >
-
-        <div class="story-bubble">
-          안녕하세요, 신부 김엔지입니다.<br>
-          정호 씨의 다정한 마음에 반해<br>
-          평생의 동반자가 되기로 했어요.
-        </div>
 
       </div>
     </div>
@@ -822,24 +865,32 @@ const DETAILS_HOLD_MS = 1000;
 const GREETING_SCROLL_FADE = 0.08;
 const INTRO_OUTRO_FADE_MS = 450;
 const FINAL_PHOTO_FADE_PX = 1200;
-const INTRO_TO_STORY_GAP_PX = 800;
+const INTRO_TO_STORY_GAP_PX = 500;
 const STORY_FACE_FADE_MS = 650;
 const BOY_SHRINK_HOLD_MS = 200;
 const BOY_BUBBLE_GAP_PX = 10;
-const STORY_MESSAGE_STAGGER_MS = 360;
+const STORY_MESSAGE_STAGGER_MS = 600;
 const STORY_MESSAGE_FADE_MS = 550;
-const BOY_MESSAGE_HOLD_MS = 1000;
+const BOY_MESSAGE_HOLD_MS = 500;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let greetingOutStartProgress = 0;
 let detailsBrakeActive = false;
 let introHasFinished = false;
-let boySequenceStartedAt = 0;
-let boySequenceDone = false;
+const storySequenceState = {
+  storyBoy: {
+    startedAt: 0,
+    done: false,
+  },
+  storyGirl: {
+    startedAt: 0,
+    done: false,
+  },
+};
 let boyBrakeLockY = 0;
 let boyScrollLockActive = false;
 
-function alignBoyBubbleToFace(face, bubble){
+function alignStoryBubbleToFace(face, bubble, isRightSide){
   const faceRect =
     face.getBoundingClientRect();
   const firstMessage =
@@ -851,16 +902,24 @@ function alignBoyBubbleToFace(face, bubble){
     getComputedStyle(firstMessage, "::before");
   const tailLeft =
     Number(tailStyle.left.replace("px", "")) || 0;
+  const tailRight =
+    Number(tailStyle.right.replace("px", "")) || 0;
+  const edgeMargin =
+    isRightSide
+      ? window.innerWidth - faceRect.right
+      : faceRect.left;
   const desiredBubbleLeft =
-    faceRect.right +
-    BOY_BUBBLE_GAP_PX -
-    tailLeft;
-  const desiredRight =
-    window.innerWidth - faceRect.left;
+    isRightSide
+      ? edgeMargin
+      : faceRect.right + BOY_BUBBLE_GAP_PX - tailLeft;
+  const desiredBubbleRight =
+    isRightSide
+      ? faceRect.left - BOY_BUBBLE_GAP_PX + tailRight
+      : window.innerWidth - edgeMargin;
   const bubbleWidth =
     Math.max(
-      120,
-      desiredRight - desiredBubbleLeft
+      0,
+      desiredBubbleRight - desiredBubbleLeft
     );
 
   bubble.style.setProperty(
@@ -923,12 +982,20 @@ function stopBoyBrake(){
   boyScrollLockActive = false;
 }
 
-function resetBoySequence(bubble){
+function hasActiveStorySequence(){
+  return Object
+    .values(storySequenceState)
+    .some((state)=>state.startedAt && !state.done);
+}
+
+function resetStorySequence(sectionId, bubble){
   resetBoyMessages(bubble);
   resetBoyBubbleAlignment(bubble);
-  boySequenceStartedAt = 0;
-  boySequenceDone = false;
-  stopBoyBrake();
+  storySequenceState[sectionId].startedAt = 0;
+  storySequenceState[sectionId].done = false;
+  if(!hasActiveStorySequence()){
+    stopBoyBrake();
+  }
 }
 
 intro.style.height =
@@ -979,10 +1046,7 @@ function startIntroTextSequenceIfNeeded(){
 function blockDetailsBrakeScroll(event){
   if(
     boyScrollLockActive ||
-    (
-      boySequenceStartedAt &&
-      !boySequenceDone
-    )
+    hasActiveStorySequence()
   ){
     holdBoyBrakePosition();
     event.preventDefault();
@@ -1015,10 +1079,7 @@ function blockDetailsBrakeKeys(event){
   if(!scrollKeys.includes(event.key)) return;
   if(
     boyScrollLockActive ||
-    (
-      boySequenceStartedAt &&
-      !boySequenceDone
-    )
+    hasActiveStorySequence()
   ){
     holdBoyBrakePosition();
     event.preventDefault();
@@ -1428,21 +1489,26 @@ function updateStory(){
     if(!bubble || !face) return;
 
     if(progress > 0.25){
-      if(sec.id === "storyBoy"){
-        if(!boySequenceStartedAt){
-          boySequenceStartedAt = now;
-          boySequenceDone = false;
+      if(sec.id === "storyBoy" || sec.id === "storyGirl"){
+        const sequenceState =
+          storySequenceState[sec.id];
+        const isRightSide =
+          sec.id === "storyGirl";
+
+        if(!sequenceState.startedAt){
+          sequenceState.startedAt = now;
+          sequenceState.done = false;
           startBoyBrake(revealY);
         }
 
-        if(!boySequenceDone){
+        if(!sequenceState.done){
           holdBoyBrakePosition();
         }
 
         face.classList.add("show");
 
         const elapsed =
-          now - boySequenceStartedAt;
+          now - sequenceState.startedAt;
         const shrinkAt =
           STORY_FACE_FADE_MS + BOY_SHRINK_HOLD_MS;
         const messagesAt =
@@ -1459,7 +1525,7 @@ function updateStory(){
 
         if(elapsed >= shrinkAt){
           face.classList.add("shrink");
-          alignBoyBubbleToFace(face, bubble);
+          alignStoryBubbleToFace(face, bubble, isRightSide);
         }else{
           face.classList.remove("shrink");
           resetBoyBubbleAlignment(bubble);
@@ -1484,7 +1550,7 @@ function updateStory(){
         }
 
         if(elapsed >= releaseAt){
-          boySequenceDone = true;
+          sequenceState.done = true;
           stopBoyBrake();
         }else{
           requestAnimationFrame(update);
@@ -1494,13 +1560,37 @@ function updateStory(){
         bubble.classList.add("show");
       }
     }else{
+      if(
+        (
+          sec.id === "storyBoy" &&
+          storySequenceState.storyBoy.done
+        ) ||
+        (
+          sec.id === "storyGirl" &&
+          storySequenceState.storyGirl.done
+        )
+      ){
+        const isRightSide =
+          sec.id === "storyGirl";
+        face.classList.add("show");
+        face.classList.add("shrink");
+        bubble.classList.add("show");
+        alignStoryBubbleToFace(face, bubble, isRightSide);
+        bubble
+          .querySelectorAll(".story-message")
+          .forEach((message)=>{
+            message.classList.add("show");
+          });
+        return;
+      }
+
       face.classList.remove("show");
       face.classList.remove("shrink");
       bubble.classList.remove("show");
       resetBoyBubbleAlignment(bubble);
 
-      if(sec.id === "storyBoy"){
-        resetBoySequence(bubble);
+      if(sec.id === "storyBoy" || sec.id === "storyGirl"){
+        resetStorySequence(sec.id, bubble);
       }
     }
   });
