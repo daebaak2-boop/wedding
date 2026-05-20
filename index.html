@@ -423,7 +423,11 @@ html,body{
 }
 
 #storyBoy{
-  height:calc(100vh + 389px);
+  height:calc(100vh + 96px);
+}
+
+#storyGirl{
+  margin-top:-230px;
 }
 
 .story-sticky{
@@ -669,6 +673,65 @@ html,body{
   transform:rotate(8deg);
 }
 
+.letter-section{
+  position:relative;
+  height:calc(100vh + 520px);
+  background:#fffaf6;
+}
+
+.letter-sticky{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+  background:#fffaf6;
+}
+
+.letter-frame{
+  position:relative;
+  width:100%;
+  max-width:560px;
+  height:100%;
+  margin:0 auto;
+  overflow:hidden;
+}
+
+.letter-photo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity .65s ease;
+}
+
+.letter-photo.show{
+  opacity:1;
+}
+
+.letter-copy{
+  position:absolute;
+  top:7%;
+  left:50%;
+  width:min(86%, 440px);
+  transform:translateX(-50%);
+  color:#fff;
+  font-family:'Nanum Pen Script',"나눔손글씨 엉겅퀴체",cursive;
+  font-size:clamp(26px, 7vw, 36px);
+  line-height:1.45;
+  letter-spacing:0;
+  white-space:pre-line;
+  word-break:keep-all;
+  text-align:left;
+  text-shadow:0 2px 10px rgba(0,0,0,.55);
+  opacity:0;
+}
+
+.letter-copy.show{
+  opacity:1;
+}
+
 .story-name{
   display:block;
   font-family:'Gowun Batang',serif;
@@ -806,6 +869,46 @@ html,body{
 
 </section>
 
+<section class="letter-story">
+
+  <div class="letter-section" data-letter-text="저희는 원래 결혼식을 하지 않으려고 했어요.&#10;&#10;많은 예식들이 형식과 절차 속에 머무르는 모습을 보면서요.">
+    <div class="letter-sticky">
+      <div class="letter-frame">
+        <img class="letter-photo" src="./letter1.jpg" alt="">
+        <div class="letter-copy"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="letter-section" data-letter-text="그러던 어느날 문득 생각했어요.&#10;&#10;“정말 소중한 사람들과 온전히 축하하고, 축하받을 수 있는 자리를 만들어 보는 건 어떨까?”">
+    <div class="letter-sticky">
+      <div class="letter-frame">
+        <img class="letter-photo" src="./letter2.jpg" alt="">
+        <div class="letter-copy"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="letter-section" data-letter-text="그래서 가까운 분들과 함께,&#10;한국에서는 정호의 가족들만 모시고 작은 결혼식을 올리기로 했습니다.">
+    <div class="letter-sticky">
+      <div class="letter-frame">
+        <img class="letter-photo" src="./letter3.jpg" alt="">
+        <div class="letter-copy"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="letter-section" data-letter-text="소박하지만 따뜻한 자리를 마련할게요.&#10;&#10;저희와 함께해 주세요.">
+    <div class="letter-sticky">
+      <div class="letter-frame">
+        <img class="letter-photo" src="./letter4.jpg" alt="">
+        <div class="letter-copy"></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
 <section class="dday">
   <div class="dday-inner">
 
@@ -869,9 +972,13 @@ const INTRO_TO_STORY_GAP_PX = 500;
 const STORY_FACE_FADE_MS = 650;
 const BOY_SHRINK_HOLD_MS = 200;
 const BOY_BUBBLE_GAP_PX = 10;
+const STORY_BUBBLE_EDGE_MARGIN_PX = 31;
 const STORY_MESSAGE_STAGGER_MS = 600;
 const STORY_MESSAGE_FADE_MS = 550;
 const BOY_MESSAGE_HOLD_MS = 500;
+const LETTER_PHOTO_FADE_MS = 650;
+const LETTER_HOLD_MS = 500;
+const LETTER_WRITE_MS = 1600;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let greetingOutStartProgress = 0;
@@ -887,8 +994,11 @@ const storySequenceState = {
     done: false,
   },
 };
+const letterSequenceState = new Map();
 let boyBrakeLockY = 0;
 let boyScrollLockActive = false;
+let letterBrakeLockY = 0;
+let letterScrollLockActive = false;
 
 function alignStoryBubbleToFace(face, bubble, isRightSide){
   const faceRect =
@@ -915,7 +1025,7 @@ function alignStoryBubbleToFace(face, bubble, isRightSide){
   const desiredBubbleRight =
     isRightSide
       ? faceRect.left - BOY_BUBBLE_GAP_PX + tailRight
-      : window.innerWidth - edgeMargin;
+      : window.innerWidth - STORY_BUBBLE_EDGE_MARGIN_PX;
   const bubbleWidth =
     Math.max(
       0,
@@ -982,10 +1092,31 @@ function stopBoyBrake(){
   boyScrollLockActive = false;
 }
 
+function startLetterBrake(lockY){
+  letterBrakeLockY = lockY;
+  letterScrollLockActive = true;
+  holdLetterBrakePosition();
+}
+
+function holdLetterBrakePosition(){
+  window.scrollTo(0, letterBrakeLockY);
+}
+
+function stopLetterBrake(){
+  letterScrollLockActive = false;
+}
+
 function hasActiveStorySequence(){
   return Object
     .values(storySequenceState)
     .some((state)=>state.startedAt && !state.done);
+}
+
+function hasActiveLetterSequence(){
+  for(const state of letterSequenceState.values()){
+    if(state.startedAt && !state.done) return true;
+  }
+  return false;
 }
 
 function resetStorySequence(sectionId, bubble){
@@ -1046,9 +1177,15 @@ function startIntroTextSequenceIfNeeded(){
 function blockDetailsBrakeScroll(event){
   if(
     boyScrollLockActive ||
-    hasActiveStorySequence()
+    letterScrollLockActive ||
+    hasActiveStorySequence() ||
+    hasActiveLetterSequence()
   ){
-    holdBoyBrakePosition();
+    if(letterScrollLockActive){
+      holdLetterBrakePosition();
+    }else{
+      holdBoyBrakePosition();
+    }
     event.preventDefault();
     return;
   }
@@ -1079,9 +1216,15 @@ function blockDetailsBrakeKeys(event){
   if(!scrollKeys.includes(event.key)) return;
   if(
     boyScrollLockActive ||
-    hasActiveStorySequence()
+    letterScrollLockActive ||
+    hasActiveStorySequence() ||
+    hasActiveLetterSequence()
   ){
-    holdBoyBrakePosition();
+    if(letterScrollLockActive){
+      holdLetterBrakePosition();
+    }else{
+      holdBoyBrakePosition();
+    }
     event.preventDefault();
     return;
   }
@@ -1361,6 +1504,7 @@ function update(){
   updateIntro();
 
   updateStory();
+  updateLetters();
 }
 
 window.addEventListener(
@@ -1592,6 +1736,117 @@ function updateStory(){
       if(sec.id === "storyBoy" || sec.id === "storyGirl"){
         resetStorySequence(sec.id, bubble);
       }
+    }
+  });
+}
+
+/* ===== Letter scroll sequence ===== */
+const letterSections =
+  document.querySelectorAll(".letter-section");
+
+function writeLetterText(copy, text, ratio){
+  const length =
+    Math.round(text.length * clamp(ratio, 0, 1));
+  copy.textContent =
+    text.slice(0, length);
+}
+
+function resetLetterSection(sec){
+  const photo =
+    sec.querySelector(".letter-photo");
+  const copy =
+    sec.querySelector(".letter-copy");
+
+  if(photo) photo.classList.remove("show");
+  if(copy){
+    copy.classList.remove("show");
+    copy.textContent = "";
+  }
+
+  letterSequenceState.delete(sec);
+  if(!hasActiveLetterSequence()){
+    stopLetterBrake();
+  }
+}
+
+function updateLetters(){
+  const now = performance.now();
+
+  letterSections.forEach((sec)=>{
+    const rect =
+      sec.getBoundingClientRect();
+    const scrollable =
+      sec.offsetHeight - window.innerHeight;
+    const progress =
+      clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
+    const sectionTop =
+      window.scrollY + rect.top;
+    const revealY =
+      sectionTop + scrollable * 0.08 + 1;
+    const photo =
+      sec.querySelector(".letter-photo");
+    const copy =
+      sec.querySelector(".letter-copy");
+    const text =
+      sec.dataset.letterText || "";
+
+    if(!photo || !copy) return;
+
+    if(progress > 0.08){
+      let state =
+        letterSequenceState.get(sec);
+
+      if(!state){
+        state = {
+          startedAt: now,
+          done: false,
+        };
+        letterSequenceState.set(sec, state);
+        startLetterBrake(revealY);
+      }
+
+      if(!state.done){
+        holdLetterBrakePosition();
+      }
+
+      photo.classList.add("show");
+
+      const elapsed =
+        now - state.startedAt;
+      const writeAt =
+        LETTER_PHOTO_FADE_MS + LETTER_HOLD_MS;
+      const writeProgress =
+        (elapsed - writeAt) / LETTER_WRITE_MS;
+      const releaseAt =
+        writeAt + LETTER_WRITE_MS + LETTER_HOLD_MS;
+
+      if(elapsed >= writeAt){
+        copy.classList.add("show");
+        writeLetterText(copy, text, writeProgress);
+      }else{
+        copy.classList.remove("show");
+        copy.textContent = "";
+      }
+
+      if(elapsed >= releaseAt){
+        copy.textContent = text;
+        state.done = true;
+        stopLetterBrake();
+      }else{
+        requestAnimationFrame(update);
+      }
+    }else{
+      const state =
+        letterSequenceState.get(sec);
+
+      if(state && state.done){
+        photo.classList.add("show");
+        copy.classList.add("show");
+        copy.textContent = text;
+        return;
+      }
+
+      resetLetterSection(sec);
     }
   });
 }
