@@ -452,6 +452,7 @@ html,body{
   display:flex;
   align-items:center;
   gap:14px;
+  transform:translateY(-100px);
 }
 
 .story-row.left{
@@ -673,10 +674,16 @@ html,body{
   transform:rotate(8deg);
 }
 
-.letter-section{
+.letter-story{
   position:relative;
-  height:calc(100vh + 520px);
+  height:calc(100vh + 3240px);
   background:#fffaf6;
+}
+
+.letter-section{
+  position:absolute;
+  inset:0;
+  height:100%;
 }
 
 .letter-sticky{
@@ -684,7 +691,6 @@ html,body{
   top:0;
   height:100vh;
   overflow:hidden;
-  background:#fffaf6;
 }
 
 .letter-frame{
@@ -717,7 +723,7 @@ html,body{
   width:min(86%, 440px);
   transform:translateX(-50%);
   color:#fff;
-  font-family:'Nanum Pen Script',"나눔손글씨 엉겅퀴체",cursive;
+  font-family:"나눔손글씨 엉겅퀴체","나눔손글씨엉겅퀴체","nanum-handwritting-eonggeongkwiche",cursive;
   font-size:clamp(26px, 7vw, 36px);
   line-height:1.45;
   letter-spacing:0;
@@ -1095,7 +1101,6 @@ function stopBoyBrake(){
 function startLetterBrake(lockY){
   letterBrakeLockY = lockY;
   letterScrollLockActive = true;
-  holdLetterBrakePosition();
 }
 
 function holdLetterBrakePosition(){
@@ -1117,6 +1122,15 @@ function hasActiveLetterSequence(){
     if(state.startedAt && !state.done) return true;
   }
   return false;
+}
+
+function isLetterStoryInView(){
+  const firstLetter =
+    document.querySelector(".letter-section");
+
+  if(!firstLetter) return false;
+
+  return firstLetter.getBoundingClientRect().top < window.innerHeight;
 }
 
 function resetStorySequence(sectionId, bubble){
@@ -1175,15 +1189,19 @@ function startIntroTextSequenceIfNeeded(){
 }
 
 function blockDetailsBrakeScroll(event){
+  const storyBrakeActive =
+    !isLetterStoryInView() &&
+    (
+      boyScrollLockActive ||
+      hasActiveStorySequence()
+    );
+
   if(
-    boyScrollLockActive ||
+    storyBrakeActive ||
     letterScrollLockActive ||
-    hasActiveStorySequence() ||
     hasActiveLetterSequence()
   ){
-    if(letterScrollLockActive){
-      holdLetterBrakePosition();
-    }else{
+    if(!letterScrollLockActive){
       holdBoyBrakePosition();
     }
     event.preventDefault();
@@ -1214,15 +1232,19 @@ function blockDetailsBrakeKeys(event){
   ];
 
   if(!scrollKeys.includes(event.key)) return;
+  const storyBrakeActive =
+    !isLetterStoryInView() &&
+    (
+      boyScrollLockActive ||
+      hasActiveStorySequence()
+    );
+
   if(
-    boyScrollLockActive ||
+    storyBrakeActive ||
     letterScrollLockActive ||
-    hasActiveStorySequence() ||
     hasActiveLetterSequence()
   ){
-    if(letterScrollLockActive){
-      holdLetterBrakePosition();
-    }else{
+    if(!letterScrollLockActive){
       holdBoyBrakePosition();
     }
     event.preventDefault();
@@ -1645,7 +1667,7 @@ function updateStory(){
           startBoyBrake(revealY);
         }
 
-        if(!sequenceState.done){
+        if(!sequenceState.done && !isLetterStoryInView()){
           holdBoyBrakePosition();
         }
 
@@ -1743,6 +1765,8 @@ function updateStory(){
 /* ===== Letter scroll sequence ===== */
 const letterSections =
   document.querySelectorAll(".letter-section");
+const letterStory =
+  document.querySelector(".letter-story");
 
 function writeLetterText(copy, text, ratio){
   const length =
@@ -1770,19 +1794,35 @@ function resetLetterSection(sec){
 }
 
 function updateLetters(){
-  const now = performance.now();
+  if(!letterStory) return;
 
-  letterSections.forEach((sec)=>{
-    const rect =
-      sec.getBoundingClientRect();
-    const scrollable =
-      sec.offsetHeight - window.innerHeight;
-    const progress =
-      clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
-    const sectionTop =
-      window.scrollY + rect.top;
-    const revealY =
-      sectionTop + scrollable * 0.08 + 1;
+  const now = performance.now();
+  const storyRect =
+    letterStory.getBoundingClientRect();
+  const storyTop =
+    window.scrollY + storyRect.top;
+  const storyScrollable =
+    letterStory.offsetHeight - window.innerHeight;
+  const stepScroll =
+    storyScrollable / Math.max(letterSections.length, 1);
+  const activeStep =
+    clamp(
+      Math.floor((window.scrollY - storyTop) / stepScroll),
+      0,
+      Math.max(letterSections.length - 1, 0)
+    );
+
+  letterSections.forEach((sec, i)=>{
+    const stepStart =
+      storyTop + stepScroll * i;
+    const stepEnd =
+      stepStart + stepScroll;
+    const lockY =
+      clamp(
+        window.scrollY,
+        stepStart + 1,
+        stepEnd - 1
+      );
     const photo =
       sec.querySelector(".letter-photo");
     const copy =
@@ -1792,21 +1832,18 @@ function updateLetters(){
 
     if(!photo || !copy) return;
 
-    if(progress > 0.08){
+    if(i === activeStep && window.scrollY > storyTop){
       let state =
         letterSequenceState.get(sec);
 
       if(!state){
+        stopBoyBrake();
         state = {
           startedAt: now,
           done: false,
         };
         letterSequenceState.set(sec, state);
-        startLetterBrake(revealY);
-      }
-
-      if(!state.done){
-        holdLetterBrakePosition();
+        startLetterBrake(lockY);
       }
 
       photo.classList.add("show");
