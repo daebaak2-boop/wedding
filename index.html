@@ -759,21 +759,21 @@ html,body{
 
   <div class="intro-sticky">
 
-    <div class="intro-photo" style="opacity:1"><img src="./run1.jpg" alt="" fetchpriority="high"></div>
-    <div class="intro-photo"><img src="./run2.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run3.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run4.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run5.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run6.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run7.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run8.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run9.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run10.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run11.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run12.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run13.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./run14.jpg" alt=""></div>
-    <div class="intro-photo"><img src="./photo.jpg" alt=""></div>
+    <div class="intro-photo" style="opacity:1"><img src="./run1.jpg" alt="" fetchpriority="high" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run2.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run3.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run4.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run5.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run6.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run7.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run8.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run9.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run10.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run11.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run12.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run13.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./run14.jpg" alt="" decoding="async"></div>
+    <div class="intro-photo"><img data-src="./photo.jpg" alt="" decoding="async"></div>
 
     <div class="intro-dim"></div>
 
@@ -839,6 +839,8 @@ html,body{
           src="./boy.jpg"
           class="story-face"
           alt="신랑 김정호"
+          loading="lazy"
+          decoding="async"
         >
 
         <div class="story-bubble">
@@ -867,6 +869,8 @@ html,body{
           src="./girl.jpg"
           class="story-face"
           alt="신부 김엔지"
+          loading="lazy"
+          decoding="async"
         >
 
       </div>
@@ -880,7 +884,7 @@ html,body{
   <div class="letter-section" data-letter-text="저희는 원래 결혼식을 하지 않으려고 했어요.&#10;&#10;많은 예식들이 형식과 절차 속에 머무르는 모습을 보면서요.">
     <div class="letter-sticky">
       <div class="letter-frame">
-        <img class="letter-photo" src="./letter1.jpg" alt="">
+        <img class="letter-photo" src="./letter1.jpg" alt="" loading="lazy" decoding="async">
         <div class="letter-copy"></div>
       </div>
     </div>
@@ -889,7 +893,7 @@ html,body{
   <div class="letter-section" data-letter-text="그러던 어느날 문득 생각했어요.&#10;&#10;“정말 소중한 사람들과 온전히 축하하고, 축하받을 수 있는 자리를 만들어 보는 건 어떨까?”">
     <div class="letter-sticky">
       <div class="letter-frame">
-        <img class="letter-photo" src="./letter2.jpg" alt="">
+        <img class="letter-photo" src="./letter2.jpg" alt="" loading="lazy" decoding="async">
         <div class="letter-copy"></div>
       </div>
     </div>
@@ -898,7 +902,7 @@ html,body{
   <div class="letter-section" data-letter-text="그래서 가까운 분들과 함께,&#10;한국에서는 정호의 가족들만 모시고 작은 결혼식을 올리기로 했습니다.">
     <div class="letter-sticky">
       <div class="letter-frame">
-        <img class="letter-photo" src="./letter3.jpg" alt="">
+        <img class="letter-photo" src="./letter3.jpg" alt="" loading="lazy" decoding="async">
         <div class="letter-copy"></div>
       </div>
     </div>
@@ -907,7 +911,7 @@ html,body{
   <div class="letter-section" data-letter-text="소박하지만 따뜻한 자리를 마련할게요.&#10;&#10;저희와 함께해 주세요.">
     <div class="letter-sticky">
       <div class="letter-frame">
-        <img class="letter-photo" src="./letter4.jpg" alt="">
+        <img class="letter-photo" src="./letter4.jpg" alt="" loading="lazy" decoding="async">
         <div class="letter-copy"></div>
       </div>
     </div>
@@ -960,6 +964,16 @@ const introPhotos =
   document.querySelectorAll(
     ".intro-photo"
   );
+
+function loadIntroPhoto(photo){
+  const img =
+    photo.querySelector("img[data-src]");
+
+  if(!img) return;
+
+  img.src = img.dataset.src;
+  img.removeAttribute("data-src");
+}
 
 const introHint =
   document.getElementById(
@@ -1379,6 +1393,10 @@ function updateIntro(){
       isFirst ? 0 :
         isFinalPhoto ? finalPhotoFadeEnd :
         i * photoStep + photoStep * 0.35;
+
+    if(visualProgress >= fadeInStart - photoStep * 0.2){
+      loadIntroPhoto(el);
+    }
 
     const linear = isFirst
       ? 1
@@ -1876,7 +1894,7 @@ function updateLetters(){
       const state =
         letterSequenceState.get(sec);
 
-      if(state && state.done){
+      if(state && state.done && i === activeStep){
         photo.classList.add("show");
         copy.classList.add("show");
         copy.textContent = text;
