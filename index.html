@@ -423,11 +423,11 @@ html,body{
 }
 
 #storyBoy{
-  height:calc(100vh + 96px);
+  height:200vh;
 }
 
 #storyGirl{
-  margin-top:-230px;
+  margin-top:calc(290px - 100vh);
 }
 
 .story-sticky{
@@ -453,6 +453,12 @@ html,body{
   align-items:center;
   gap:14px;
   transform:translateY(-100px);
+}
+
+#storyBoy .story-row,
+#storyGirl .story-row{
+  opacity:1;
+  transition:opacity .55s ease;
 }
 
 .story-row.left{
@@ -890,7 +896,7 @@ html,body{
     </div>
   </div>
 
-  <div class="letter-section" data-letter-text="그러던 어느날 문득 생각했어요.&#10;&#10;“정말 소중한 사람들과 온전히 축하하고, 축하받을 수 있는 자리를 만들어 보는 건 어떨까?”">
+  <div class="letter-section" data-letter-text="그러던 어느날 문득 생각했어요.&#10;&#10;“ 정말 소중한 사람들과 온전히 축하하고, 축하받을 수 있는 자리를 만들어 보는 건 어떨까? ”">
     <div class="letter-sticky">
       <div class="letter-frame">
         <img class="letter-photo" src="./letter2.jpg" alt="" loading="lazy" decoding="async">
@@ -999,6 +1005,7 @@ const BOY_MESSAGE_HOLD_MS = 500;
 const LETTER_PHOTO_FADE_MS = 650;
 const LETTER_HOLD_MS = 500;
 const LETTER_WRITE_MS = 1600;
+const LETTER_COPY_GAP_MS = 500;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let greetingOutStartProgress = 0;
@@ -1641,9 +1648,13 @@ setInterval(tickDday, 1000);
 /* ===== Story scroll-driven bubble reveal ===== */
 const storySections =
   document.querySelectorAll(".story-section");
+let lastStoryScrollY =
+  window.scrollY;
 
 function updateStory(){
   const now = performance.now();
+  const storyScrollsBack =
+    window.scrollY < lastStoryScrollY;
 
   storySections.forEach((sec)=>{
 
@@ -1669,8 +1680,10 @@ function updateStory(){
       sec.querySelector(".story-bubble");
     const face =
       sec.querySelector(".story-face");
+    const row =
+      sec.querySelector(".story-row");
 
-    if(!bubble || !face) return;
+    if(!bubble || !face || !row) return;
 
     if(progress > 0.25){
       if(sec.id === "storyBoy" || sec.id === "storyGirl"){
@@ -1739,6 +1752,11 @@ function updateStory(){
         }else{
           requestAnimationFrame(update);
         }
+
+        row.style.opacity =
+          sequenceState.done && !storyScrollsBack
+            ? clamp(1 - (progress - 0.25) / 0.28, 0, 1)
+            : 1;
       }else{
         face.classList.add("show");
         bubble.classList.add("show");
@@ -1765,9 +1783,11 @@ function updateStory(){
           .forEach((message)=>{
             message.classList.add("show");
           });
+        row.style.opacity = 1;
         return;
       }
 
+      row.style.opacity = 1;
       face.classList.remove("show");
       face.classList.remove("shrink");
       bubble.classList.remove("show");
@@ -1778,6 +1798,9 @@ function updateStory(){
       }
     }
   });
+
+  lastStoryScrollY =
+    window.scrollY;
 }
 
 /* ===== Letter scroll sequence ===== */
@@ -1791,6 +1814,47 @@ function writeLetterText(copy, text, ratio){
     Math.round(text.length * clamp(ratio, 0, 1));
   copy.textContent =
     text.slice(0, length);
+}
+
+function writeLetterCopy(copy, sec, text, elapsed){
+  const hasCopyGap =
+    sec === letterSections[0] ||
+    sec === letterSections[1];
+
+  if(!hasCopyGap){
+    writeLetterText(copy, text, elapsed / LETTER_WRITE_MS);
+    return LETTER_WRITE_MS;
+  }
+
+  const parts =
+    text.split("\n\n");
+  const first =
+    parts[0] || "";
+  const second =
+    parts.slice(1).join("\n\n");
+  const firstWriteMs =
+    LETTER_WRITE_MS *
+    (first.length / Math.max(text.length, 1));
+  const secondWriteMs =
+    LETTER_WRITE_MS - firstWriteMs;
+
+  if(elapsed < firstWriteMs){
+    writeLetterText(copy, first, elapsed / firstWriteMs);
+  }else if(elapsed < firstWriteMs + LETTER_COPY_GAP_MS){
+    copy.textContent = first;
+  }else{
+    const secondElapsed =
+      elapsed - firstWriteMs - LETTER_COPY_GAP_MS;
+    const secondLength =
+      Math.round(
+        second.length *
+        clamp(secondElapsed / Math.max(secondWriteMs, 1), 0, 1)
+      );
+    copy.textContent =
+      `${first}\n\n${second.slice(0, secondLength)}`;
+  }
+
+  return LETTER_WRITE_MS + LETTER_COPY_GAP_MS;
 }
 
 function resetLetterSection(sec){
@@ -1811,6 +1875,19 @@ function resetLetterSection(sec){
   }
 }
 
+function hideLetterSection(sec){
+  const photo =
+    sec.querySelector(".letter-photo");
+  const copy =
+    sec.querySelector(".letter-copy");
+
+  if(photo) photo.classList.remove("show");
+  if(copy){
+    copy.classList.remove("show");
+    copy.textContent = "";
+  }
+}
+
 function updateLetters(){
   if(!letterStory) return;
 
@@ -1823,12 +1900,23 @@ function updateLetters(){
     letterStory.offsetHeight - window.innerHeight;
   const stepScroll =
     storyScrollable / Math.max(letterSections.length, 1);
-  const activeStep =
+  const scrollStep =
     clamp(
       Math.floor((window.scrollY - storyTop) / stepScroll),
       0,
       Math.max(letterSections.length - 1, 0)
     );
+  let unlockedStep = 0;
+
+  while(
+    unlockedStep < letterSections.length - 1 &&
+    letterSequenceState.get(letterSections[unlockedStep])?.done
+  ){
+    unlockedStep++;
+  }
+
+  const activeStep =
+    Math.min(scrollStep, unlockedStep);
 
   letterSections.forEach((sec, i)=>{
     const stepStart =
@@ -1870,14 +1958,17 @@ function updateLetters(){
         now - state.startedAt;
       const writeAt =
         LETTER_PHOTO_FADE_MS + LETTER_HOLD_MS;
-      const writeProgress =
-        (elapsed - writeAt) / LETTER_WRITE_MS;
+      const writeDuration =
+        sec === letterSections[0] ||
+        sec === letterSections[1]
+          ? LETTER_WRITE_MS + LETTER_COPY_GAP_MS
+          : LETTER_WRITE_MS;
       const releaseAt =
-        writeAt + LETTER_WRITE_MS + LETTER_HOLD_MS;
+        writeAt + writeDuration + LETTER_HOLD_MS;
 
       if(elapsed >= writeAt){
         copy.classList.add("show");
-        writeLetterText(copy, text, writeProgress);
+        writeLetterCopy(copy, sec, text, elapsed - writeAt);
       }else{
         copy.classList.remove("show");
         copy.textContent = "";
@@ -1894,10 +1985,14 @@ function updateLetters(){
       const state =
         letterSequenceState.get(sec);
 
-      if(state && state.done && i === activeStep){
-        photo.classList.add("show");
-        copy.classList.add("show");
-        copy.textContent = text;
+      if(state && state.done){
+        if(i === activeStep){
+          photo.classList.add("show");
+          copy.classList.add("show");
+          copy.textContent = text;
+        }else{
+          hideLetterSection(sec);
+        }
         return;
       }
 
