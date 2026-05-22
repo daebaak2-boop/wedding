@@ -1672,6 +1672,14 @@ function startIntroTextSequenceIfNeeded(){
   }
 }
 
+function isIntroInView(){
+  const rect =
+    intro.getBoundingClientRect();
+
+  return rect.top < window.innerHeight &&
+    rect.bottom > 0;
+}
+
 function startVenueOutroIfNeeded(){
   if(
     !venueSequenceState.done ||
@@ -1759,13 +1767,13 @@ function blockDetailsBrakeScroll(event){
     return;
   }
 
-  if(introTextState === "done"){
+  if(isIntroInView() && introTextState === "done"){
     setIntroTextState("introOutro");
     event.preventDefault();
     return;
   }
 
-  if(!shouldBlockIntroTextAdvance()) return;
+  if(!isIntroInView() || !shouldBlockIntroTextAdvance()) return;
 
   startIntroTextSequenceIfNeeded();
   event.preventDefault();
@@ -1824,13 +1832,13 @@ function blockDetailsBrakeKeys(event){
     return;
   }
 
-  if(introTextState === "done"){
+  if(isIntroInView() && introTextState === "done"){
     setIntroTextState("introOutro");
     event.preventDefault();
     return;
   }
 
-  if(!shouldBlockIntroTextAdvance()) return;
+  if(!isIntroInView() || !shouldBlockIntroTextAdvance()) return;
 
   startIntroTextSequenceIfNeeded();
   event.preventDefault();
