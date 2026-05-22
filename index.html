@@ -56,6 +56,8 @@
       rel="stylesheet">
 <link rel="stylesheet"
       href="https://unpkg.com/@kfonts/nanum-handwritting-eonggeongkwiche/index.css">
+<link rel="stylesheet"
+      href="https://unpkg.com/@kfonts/nanum-handwritting-daegwang-yuli/index.css">
 
 <style>
 
@@ -350,7 +352,7 @@ html,body{
 
   background:#fffaf6;
 
-  padding:0 24px 100px;
+  padding:200px 24px 100px;
 
   text-align:center;
 }
@@ -363,6 +365,41 @@ html,body{
   border-bottom:1px solid #e9dfd4;
 
   padding:48px 16px;
+  opacity:0;
+  transform:translateY(18px);
+}
+
+.dday.show .dday-inner{
+  transform:translateY(0);
+}
+
+.dday.floating .dday-inner{
+  opacity:1 !important;
+  transform:translateY(var(--dday-float-y, 0px));
+  transition:
+    opacity .5s ease,
+    transform .5s ease;
+}
+
+.dday.floating{
+  position:fixed;
+  inset:0;
+  z-index:4;
+  display:grid;
+  place-items:center;
+  height:100vh;
+  padding:24px;
+}
+
+.dday.floating.outro{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .65s ease;
+}
+
+.dday.outro .dday-inner{
+  opacity:0 !important;
+  transition:opacity .65s ease;
 }
 
 .dday-title{
@@ -407,6 +444,159 @@ html,body{
   font-size:15px;
   color:#7d736b;
   line-height:1.7;
+}
+
+.welcome-story{
+  position:relative;
+  height:calc(100vh + 1120px);
+  background:#fffaf6;
+}
+
+.welcome-sticky{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+}
+
+.welcome-frame{
+  position:relative;
+  width:100%;
+  max-width:560px;
+  height:100%;
+  margin:0 auto;
+  overflow:hidden;
+  transition:opacity .5s ease;
+}
+
+.welcome-story.outro .welcome-frame{
+  opacity:0;
+}
+
+.welcome-photo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity .65s ease;
+}
+
+.welcome-photo.show{
+  opacity:1;
+}
+
+.welcome-copy{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:18vh 22px 0;
+  color:#111;
+  text-align:center;
+}
+
+.welcome-date{
+  opacity:0;
+  transform:translateY(12px);
+  transition:
+    opacity .55s ease,
+    transform .55s ease;
+  font-family:'Gowun Batang',serif;
+  font-size:clamp(22px, 5.5vw, 30px);
+  letter-spacing:0;
+}
+
+.welcome-date.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.welcome-letter{
+  margin-top:26px;
+  min-height:2.9em;
+  width:min(86%, 440px);
+  opacity:0;
+  font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
+  font-size:clamp(32px, 7vw, 36px);
+  line-height:1.45;
+  letter-spacing:0;
+  white-space:pre-line;
+  word-break:keep-all;
+  text-align:center;
+}
+
+.welcome-letter.show{
+  opacity:1;
+}
+
+.closing{
+  position:fixed;
+  inset:0;
+  z-index:4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:32px;
+  background:#fffaf6;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .7s ease;
+}
+
+.closing.show{
+  opacity:1;
+}
+
+.closing.passed{
+  opacity:0;
+}
+
+.closing p{
+  color:#2f2a26;
+  font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
+  font-size:clamp(32px, 7vw, 42px);
+  line-height:1.45;
+  text-align:center;
+  word-break:keep-all;
+}
+
+.swim-story{
+  position:relative;
+  height:calc(100vh + 4500px);
+  background:#fffaf6;
+}
+
+.swim-sticky{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+}
+
+.swim-frame{
+  position:relative;
+  width:100%;
+  max-width:560px;
+  height:100%;
+  margin:0 auto;
+  overflow:hidden;
+}
+
+.swim-photo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 40%;
+  transform:scale(1.04);
+  transform-origin:center center;
+  opacity:0;
+  will-change:opacity, transform;
 }
 
 /* ===== Story (boy / girl) ===== */
@@ -724,19 +914,19 @@ html,body{
 
 .letter-copy{
   position:absolute;
-  top:60%;
+  top:55%;
   left:50%;
   width:min(86%, 440px);
   transform:translateX(-50%);
   color:#fff;
-  font-family:"나눔손글씨 엉겅퀴체","나눔손글씨엉겅퀴체","nanum-handwritting-eonggeongkwiche",cursive;
+  font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
   font-size:clamp(32px, 7vw, 36px);
   line-height:1.45;
   letter-spacing:0;
   white-space:pre-line;
   word-break:keep-all;
   text-align:left;
-  text-shadow:0 2px 10px rgba(0,0,0,.55);
+  text-shadow:0 2px 10px rgba(0,0,0,.825);
   opacity:0;
 }
 
@@ -749,10 +939,19 @@ html,body{
   transition:opacity .55s ease;
 }
 
+.letter-story.outro .letter-section{
+  opacity:0;
+  transition:opacity .55s ease;
+}
+
 .venue-story{
   position:relative;
   height:calc(100vh + 960px);
   background:#fffaf6;
+}
+
+.venue-story.outro .venue-frame{
+  opacity:0;
 }
 
 .venue-sticky{
@@ -769,6 +968,7 @@ html,body{
   height:100%;
   margin:0 auto;
   overflow:hidden;
+  transition:opacity .5s ease;
 }
 
 .venue-photo{
@@ -793,7 +993,6 @@ html,body{
   z-index:1;
   color:#fff;
   text-align:center;
-  text-shadow:0 2px 12px rgba(0,0,0,.6);
 }
 
 .venue-prompt,
@@ -813,16 +1012,17 @@ html,body{
 
 .venue-prompt{
   margin:0 0 18px;
-  font-family:"Nanum EongGeongGwiCe","Nanum Eonggeongkwiche","nanum-handwritting-eonggeongkwiche",cursive;
-  font-size:clamp(30px, 7.5vw, 42px);
+  font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
+  font-size:clamp(37.5px, 9.375vw, 52.5px);
   line-height:1.35;
+  transform:translateY(-20px);
 }
 
 .venue-address{
   margin:0;
   font-size:clamp(16px, 4.2vw, 21px);
   line-height:1.55;
-  font-weight:600;
+  font-weight:400;
   word-break:keep-all;
 }
 
@@ -838,6 +1038,16 @@ html,body{
   justify-content:center;
   gap:8px;
   margin-top:14px;
+  opacity:0;
+  transform:translateY(12px);
+  transition:
+    opacity .55s ease,
+    transform .55s ease;
+}
+
+.venue-map-buttons.show{
+  opacity:1;
+  transform:translateY(0);
 }
 
 .venue-map-buttons a{
@@ -1041,15 +1251,15 @@ html,body{
     <div class="venue-frame">
       <img class="venue-photo" src="./location.jpg" alt="" loading="lazy" decoding="async">
       <div class="venue-copy">
-        <p class="venue-prompt">아래의 주소로 와주세요.</p>
+        <p class="venue-prompt">아래의 주소로 초대합니다.</p>
         <div class="venue-details">
           <p class="venue-address">
             경기도 고양시 덕양구 고양대로 2002번길 29
             <span class="venue-name">아이라이크마운틴</span>
           </p>
           <div class="venue-map-buttons">
-            <a href="https://map.kakao.com/?q=%EC%95%84%EC%9D%B4%EB%9D%BC%EC%9D%B4%ED%81%AC%EB%A7%88%EC%9A%B4%ED%8B%B4" target="_blank" rel="noopener">카카오맵</a>
-            <a href="https://map.naver.com/p/search/%EC%95%84%EC%9D%B4%EB%9D%BC%EC%9D%B4%ED%81%AC%EB%A7%88%EC%9A%B4%ED%8B%B4" target="_blank" rel="noopener">네이버지도</a>
+            <a href="https://map.kakao.com/?q=%EA%B2%BD%EA%B8%B0%EB%8F%84%20%EA%B3%A0%EC%96%91%EC%8B%9C%20%EB%8D%95%EC%96%91%EA%B5%AC%20%EA%B3%A0%EC%96%91%EB%8C%80%EB%A1%9C%202002%EB%B2%88%EA%B8%B8%2029" target="_blank" rel="noopener">카카오맵</a>
+            <a href="https://map.naver.com/p/search/%EA%B2%BD%EA%B8%B0%EB%8F%84%20%EA%B3%A0%EC%96%91%EC%8B%9C%20%EB%8D%95%EC%96%91%EA%B5%AC%20%EA%B3%A0%EC%96%91%EB%8C%80%EB%A1%9C%202002%EB%B2%88%EA%B8%B8%2029" target="_blank" rel="noopener">네이버지도</a>
           </div>
         </div>
       </div>
@@ -1061,33 +1271,70 @@ html,body{
   <div class="dday-inner">
 
     <div class="dday-title">
-      OUR WEDDING DAY
+      정호와 엔지의 결혼식이
     </div>
 
     <div class="dday-grid">
       <div class="dday-cell">
         <div class="dday-num" id="ddayDays">--</div>
-        <div class="dday-label">DAYS</div>
+        <div class="dday-label">일</div>
       </div>
       <div class="dday-cell">
         <div class="dday-num" id="ddayHours">--</div>
-        <div class="dday-label">HOURS</div>
+        <div class="dday-label">시간</div>
       </div>
       <div class="dday-cell">
         <div class="dday-num" id="ddayMins">--</div>
-        <div class="dday-label">MIN</div>
+        <div class="dday-label">분</div>
       </div>
       <div class="dday-cell">
         <div class="dday-num" id="ddaySecs">--</div>
-        <div class="dday-label">SEC</div>
+        <div class="dday-label">초</div>
       </div>
     </div>
 
     <div class="dday-msg" id="ddayMsg">
-      정호 ♡ 엔지의 결혼식이<br>
-      <strong id="ddayCount">--</strong>일 남았습니다.
+      남았습니다.
     </div>
 
+  </div>
+</section>
+
+<section class="welcome-story">
+  <div class="welcome-sticky">
+    <div class="welcome-frame">
+      <img class="welcome-photo" src="./welcome.jpg" alt="" loading="lazy" decoding="async">
+      <div class="welcome-copy">
+        <p class="welcome-date">6월 27일 토요일 오후 5시</p>
+        <p class="welcome-letter"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <p>숨 참고 기다리겠습니다.</p>
+</section>
+
+<section class="swim-story">
+  <div class="swim-sticky">
+    <div class="swim-frame">
+      <img class="swim-photo" src="./swim1.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim2.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim3.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim4.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim5.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim6.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim7.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim8.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim9.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim10.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim11.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim12.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim13.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim14.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim15.jpg" alt="" loading="lazy" decoding="async">
+    </div>
   </div>
 </section>
 
@@ -1139,9 +1386,19 @@ const LETTER_PHOTO_FADE_MS = 650;
 const LETTER_HOLD_MS = 500;
 const LETTER_WRITE_MS = 1600;
 const LETTER_COPY_GAP_MS = 500;
+const LETTER_OUTRO_FADE_MS = 1000;
 const VENUE_PHOTO_FADE_MS = 650;
 const VENUE_COPY_FADE_MS = 550;
 const VENUE_HOLD_MS = 500;
+const VENUE_OUTRO_FADE_MS = 500;
+const DDAY_FLOAT_MS = 500;
+const DDAY_REVEAL_HOLD_MS = 500;
+const WELCOME_PHOTO_FADE_MS = 650;
+const WELCOME_COPY_FADE_MS = 550;
+const WELCOME_HOLD_MS = 500;
+const WELCOME_OUTRO_FADE_MS = 500;
+const CLOSING_FADE_MS = 700;
+const CLOSING_HOLD_MS = 500;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let finalPhotoFadeStartedAt = 0;
@@ -1160,8 +1417,31 @@ const storySequenceState = {
   },
 };
 const letterSequenceState = new Map();
+let letterOutroStartedAt = 0;
+let letterOutroDone = false;
+let lastLetterScrollY =
+  window.scrollY;
 const venueSequenceState = {
   startedAt: 0,
+  done: false,
+  releaseY: 0,
+  outroStartedAt: 0,
+  outroDone: false,
+};
+let ddayRevealStartedAt = 0;
+let ddayRevealDone = false;
+let lastVenueRevealScrollY =
+  window.scrollY;
+const welcomeSequenceState = {
+  startedAt: 0,
+  done: false,
+  releaseY: 0,
+  outroStartedAt: 0,
+  outroDone: false,
+};
+const closingSequenceState = {
+  startedAt: 0,
+  shownAt: 0,
   done: false,
 };
 let boyBrakeLockY = 0;
@@ -1293,6 +1573,16 @@ function hasActiveVenueSequence(){
     !venueSequenceState.done;
 }
 
+function hasActiveWelcomeSequence(){
+  return welcomeSequenceState.startedAt &&
+    !welcomeSequenceState.done;
+}
+
+function hasActiveClosingSequence(){
+  return closingSequenceState.startedAt &&
+    !closingSequenceState.done;
+}
+
 function isLetterStoryInView(){
   const firstLetter =
     document.querySelector(".letter-section");
@@ -1357,6 +1647,51 @@ function startIntroTextSequenceIfNeeded(){
   }
 }
 
+function startVenueOutroIfNeeded(){
+  if(
+    !venueSequenceState.done ||
+    venueSequenceState.outroStartedAt ||
+    !venueStory
+  ) return false;
+
+  venueSequenceState.outroStartedAt =
+    performance.now();
+  venueStory.classList.add("outro");
+  startLetterBrake(venueSequenceState.releaseY);
+  requestAnimationFrame(update);
+  return true;
+}
+
+function startWelcomeOutroIfNeeded(){
+  if(
+    !welcomeSequenceState.done ||
+    welcomeSequenceState.outroStartedAt ||
+    !welcomeStory
+  ) return false;
+
+  welcomeSequenceState.outroStartedAt =
+    performance.now();
+  welcomeStory.classList.add("outro");
+  startLetterBrake(welcomeSequenceState.releaseY);
+  requestAnimationFrame(update);
+  return true;
+}
+
+function startSwimIfNeeded(){
+  if(
+    !closingSequenceState.done ||
+    !closingSequenceState.shownAt ||
+    !closing ||
+    !swimStory ||
+    closing.classList.contains("passed")
+  ) return false;
+
+  closing.classList.add("passed");
+  window.scrollTo(0, swimStory.offsetTop + 1);
+  updateSwim();
+  return true;
+}
+
 function blockDetailsBrakeScroll(event){
   const storyBrakeActive =
     !isLetterStoryInView() &&
@@ -1367,7 +1702,9 @@ function blockDetailsBrakeScroll(event){
   const letterBrakeActive =
     letterScrollLockActive ||
     hasActiveLetterSequence() ||
-    hasActiveVenueSequence();
+    hasActiveVenueSequence() ||
+    hasActiveWelcomeSequence() ||
+    hasActiveClosingSequence();
 
   if(
     storyBrakeActive ||
@@ -1378,6 +1715,21 @@ function blockDetailsBrakeScroll(event){
     }else{
       holdBoyBrakePosition();
     }
+    event.preventDefault();
+    return;
+  }
+
+  if(startVenueOutroIfNeeded()){
+    event.preventDefault();
+    return;
+  }
+
+  if(startWelcomeOutroIfNeeded()){
+    event.preventDefault();
+    return;
+  }
+
+  if(startSwimIfNeeded()){
     event.preventDefault();
     return;
   }
@@ -1415,7 +1767,9 @@ function blockDetailsBrakeKeys(event){
   const letterBrakeActive =
     letterScrollLockActive ||
     hasActiveLetterSequence() ||
-    hasActiveVenueSequence();
+    hasActiveVenueSequence() ||
+    hasActiveWelcomeSequence() ||
+    hasActiveClosingSequence();
 
   if(
     storyBrakeActive ||
@@ -1426,6 +1780,21 @@ function blockDetailsBrakeKeys(event){
     }else{
       holdBoyBrakePosition();
     }
+    event.preventDefault();
+    return;
+  }
+
+  if(startVenueOutroIfNeeded()){
+    event.preventDefault();
+    return;
+  }
+
+  if(startWelcomeOutroIfNeeded()){
+    event.preventDefault();
+    return;
+  }
+
+  if(startSwimIfNeeded()){
     event.preventDefault();
     return;
   }
@@ -1741,6 +2110,10 @@ function update(){
   updateStory();
   updateLetters();
   updateVenue();
+  updateDdayReveal();
+  updateWelcome();
+  updateClosing();
+  updateSwim();
 }
 
 window.addEventListener(
@@ -2001,6 +2374,14 @@ const letterStory =
   document.querySelector(".letter-story");
 const venueStory =
   document.querySelector(".venue-story");
+const welcomeStory =
+  document.querySelector(".welcome-story");
+const closing =
+  document.querySelector(".closing");
+const swimStory =
+  document.querySelector(".swim-story");
+const swimPhotos =
+  document.querySelectorAll(".swim-photo");
 
 function writeLetterText(copy, text, ratio){
   const length =
@@ -2089,6 +2470,8 @@ function updateLetters(){
   if(!letterStory) return;
 
   const now = performance.now();
+  const letterScrollsBack =
+    window.scrollY < lastLetterScrollY;
   const storyRect =
     letterStory.getBoundingClientRect();
   const storyTop =
@@ -2118,9 +2501,28 @@ function updateLetters(){
     letterSections.length - 1;
   const lastState =
     letterSequenceState.get(letterSections[lastStep]);
-  const lastOutro =
+  const shouldStartLastOutro =
     lastState?.done && scrollStep === lastStep &&
-    window.scrollY > storyTop + stepScroll * lastStep + 1;
+    window.scrollY > (lastState.releaseY || Infinity) + 1;
+
+  if(shouldStartLastOutro && !letterOutroStartedAt){
+    letterOutroStartedAt = now;
+    startLetterBrake(lastState.releaseY);
+  }
+
+  const lastOutro =
+    !!letterOutroStartedAt && !letterScrollsBack;
+
+  if(lastOutro && !letterOutroDone){
+    if(now - letterOutroStartedAt >= LETTER_OUTRO_FADE_MS){
+      letterOutroDone = true;
+      stopLetterBrake();
+    }else{
+      requestAnimationFrame(update);
+    }
+  }
+
+  letterStory.classList.toggle("outro", lastOutro);
 
   letterSections.forEach((sec, i)=>{
     const stepStart =
@@ -2187,6 +2589,7 @@ function updateLetters(){
       if(elapsed >= releaseAt){
         copy.textContent = text;
         state.done = true;
+        state.releaseY = window.scrollY;
         stopLetterBrake();
       }else{
         requestAnimationFrame(update);
@@ -2200,8 +2603,13 @@ function updateLetters(){
           photo.classList.add("show");
           copy.classList.add("show");
           copy.textContent = text;
-        }else{
+        }else if(i > activeStep){
           hideLetterSection(sec, i > activeStep);
+        }else if(activeStep === lastStep){
+          hideLetterSection(sec, true);
+        }else{
+          photo.classList.add("show");
+          hideLetterSection(sec, false);
         }
         return;
       }
@@ -2209,10 +2617,20 @@ function updateLetters(){
       resetLetterSection(sec);
     }
   });
+
+  lastLetterScrollY =
+    window.scrollY;
 }
 
 function updateVenue(){
   if(!venueStory) return;
+
+  const finalLetter =
+    letterSections[letterSections.length - 1];
+  const finalLetterDone =
+    letterSequenceState.get(finalLetter)?.done;
+
+  if(!finalLetterDone) return;
 
   const rect =
     venueStory.getBoundingClientRect();
@@ -2226,15 +2644,22 @@ function updateVenue(){
     venueStory.querySelector(".venue-prompt");
   const details =
     venueStory.querySelector(".venue-details");
+  const buttons =
+    venueStory.querySelector(".venue-map-buttons");
 
-  if(!photo || !prompt || !details) return;
+  if(!photo || !prompt || !details || !buttons) return;
 
   if(progress <= 0){
     if(!venueSequenceState.done){
       venueSequenceState.startedAt = 0;
+      venueSequenceState.releaseY = 0;
+      venueSequenceState.outroStartedAt = 0;
+      venueSequenceState.outroDone = false;
+      venueStory.classList.remove("outro");
       photo.classList.remove("show");
       prompt.classList.remove("show");
       details.classList.remove("show");
+      buttons.classList.remove("show");
     }
     return;
   }
@@ -2256,6 +2681,9 @@ function updateVenue(){
   const detailsAt =
     promptAt + VENUE_COPY_FADE_MS + VENUE_HOLD_MS;
   const releaseAt =
+    detailsAt + VENUE_COPY_FADE_MS + VENUE_HOLD_MS +
+    VENUE_COPY_FADE_MS + VENUE_HOLD_MS;
+  const buttonsAt =
     detailsAt + VENUE_COPY_FADE_MS + VENUE_HOLD_MS;
 
   if(elapsed >= promptAt){
@@ -2266,12 +2694,247 @@ function updateVenue(){
     details.classList.add("show");
   }
 
+  if(elapsed >= buttonsAt){
+    buttons.classList.add("show");
+  }
+
   if(elapsed >= releaseAt){
     venueSequenceState.done = true;
+    venueSequenceState.releaseY =
+      window.scrollY;
     stopLetterBrake();
   }else{
     requestAnimationFrame(update);
   }
+}
+
+function updateDdayReveal(){
+  const dday =
+    document.querySelector(".dday");
+  const now =
+    performance.now();
+  const venueScrollsBack =
+    window.scrollY < lastVenueRevealScrollY;
+
+  if(!dday) return;
+
+  if(venueScrollsBack){
+    venueStory.classList.remove("outro");
+  }
+
+  if(
+    venueSequenceState.done &&
+    window.scrollY > venueSequenceState.releaseY + 1
+  ){
+    startVenueOutroIfNeeded();
+  }
+
+  if(venueSequenceState.outroStartedAt){
+    if(!venueSequenceState.outroDone){
+      if(
+        now - venueSequenceState.outroStartedAt >=
+        VENUE_OUTRO_FADE_MS
+      ){
+        venueSequenceState.outroDone = true;
+      }else{
+        requestAnimationFrame(update);
+      }
+    }
+  }
+
+  if(venueSequenceState.outroDone){
+    if(!ddayRevealStartedAt){
+      ddayRevealStartedAt = now;
+      dday.classList.add("floating", "show");
+      startLetterBrake(window.scrollY);
+    }
+
+    if(ddayRevealStartedAt && !ddayRevealDone){
+      if(
+        now - ddayRevealStartedAt >=
+        DDAY_FLOAT_MS + DDAY_REVEAL_HOLD_MS
+      ){
+        ddayRevealDone = true;
+        stopLetterBrake();
+      }else{
+        holdLetterBrakePosition();
+        requestAnimationFrame(update);
+      }
+    }
+  }
+
+  lastVenueRevealScrollY =
+    window.scrollY;
+}
+
+function updateWelcome(){
+  if(!welcomeStory) return;
+
+  const now =
+    performance.now();
+  const rect =
+    welcomeStory.getBoundingClientRect();
+  const scrollable =
+    welcomeStory.offsetHeight - window.innerHeight;
+  const progress =
+    clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
+  const photo =
+    welcomeStory.querySelector(".welcome-photo");
+  const date =
+    welcomeStory.querySelector(".welcome-date");
+  const letter =
+    welcomeStory.querySelector(".welcome-letter");
+  const dday =
+    document.querySelector(".dday");
+  const letterText =
+    "모두가 주인공입니다.\n예쁘게 입고 와주세요!";
+
+  if(!photo || !date || !letter || !dday) return;
+
+  if(progress <= 0 && !welcomeSequenceState.done){
+    welcomeSequenceState.startedAt = 0;
+    welcomeSequenceState.releaseY = 0;
+    welcomeSequenceState.outroStartedAt = 0;
+    welcomeSequenceState.outroDone = false;
+    welcomeStory.classList.remove("outro");
+    photo.classList.remove("show");
+    date.classList.remove("show");
+    letter.classList.remove("show");
+    letter.textContent = "";
+    closingSequenceState.startedAt = 0;
+    closingSequenceState.shownAt = 0;
+    closingSequenceState.done = false;
+    if(closing) closing.classList.remove("show", "passed");
+    return;
+  }
+
+  if(
+    ddayRevealDone &&
+    progress > 0 &&
+    !welcomeSequenceState.startedAt
+  ){
+    welcomeSequenceState.startedAt = now;
+    dday.classList.add("outro");
+    startLetterBrake(window.scrollY);
+  }
+
+  if(!welcomeSequenceState.startedAt) return;
+
+  photo.classList.add("show");
+
+  const elapsed =
+    now - welcomeSequenceState.startedAt;
+  const dateAt =
+    WELCOME_PHOTO_FADE_MS + WELCOME_HOLD_MS;
+  const letterAt =
+    dateAt + WELCOME_COPY_FADE_MS + WELCOME_HOLD_MS;
+  const releaseAt =
+    letterAt + LETTER_WRITE_MS + WELCOME_HOLD_MS;
+
+  if(elapsed >= dateAt){
+    date.classList.add("show");
+  }
+
+  if(elapsed >= letterAt){
+    letter.classList.add("show");
+    writeLetterText(
+      letter,
+      letterText,
+      (elapsed - letterAt) / LETTER_WRITE_MS
+    );
+  }
+
+  if(elapsed >= releaseAt && !welcomeSequenceState.done){
+    letter.textContent = letterText;
+    welcomeSequenceState.done = true;
+    welcomeSequenceState.releaseY =
+      window.scrollY;
+    stopLetterBrake();
+  }else{
+    requestAnimationFrame(update);
+  }
+
+  if(welcomeSequenceState.outroStartedAt){
+    if(!welcomeSequenceState.outroDone){
+      if(
+        now - welcomeSequenceState.outroStartedAt >=
+        WELCOME_OUTRO_FADE_MS
+      ){
+        welcomeSequenceState.outroDone = true;
+        closingSequenceState.startedAt = now;
+        if(closing) closing.classList.add("show");
+        requestAnimationFrame(update);
+      }else{
+        requestAnimationFrame(update);
+      }
+    }
+  }
+}
+
+function updateClosing(){
+  if(
+    !closing ||
+    !closingSequenceState.startedAt ||
+    closingSequenceState.done
+  ) return;
+
+  const now =
+    performance.now();
+
+  if(
+    !closingSequenceState.shownAt &&
+    now - closingSequenceState.startedAt >= CLOSING_FADE_MS
+  ){
+    closingSequenceState.shownAt = now;
+  }
+
+  if(
+    closingSequenceState.shownAt &&
+    now - closingSequenceState.shownAt >= CLOSING_HOLD_MS
+  ){
+    closingSequenceState.done = true;
+    stopLetterBrake();
+  }else{
+    holdLetterBrakePosition();
+    requestAnimationFrame(update);
+  }
+}
+
+function updateSwim(){
+  if(
+    !swimStory ||
+    !swimPhotos.length ||
+    !closingSequenceState.done
+  ) return;
+
+  const rect =
+    swimStory.getBoundingClientRect();
+  const scrollable =
+    swimStory.offsetHeight - window.innerHeight;
+  const progress =
+    clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
+  const photoStep =
+    1 / swimPhotos.length;
+
+  if(progress > 0){
+    closing.classList.add("passed");
+  }
+
+  swimPhotos.forEach((photo, index)=>{
+    const isFirst =
+      index === 0;
+    const fadeInStart =
+      isFirst ? 0 : index * photoStep - photoStep * .35;
+    const fadeInEnd =
+      isFirst ? 0 : index * photoStep + photoStep * .35;
+    const linear =
+      isFirst
+        ? progress > 0 ? 1 : 0
+        : lerp(progress, fadeInStart, fadeInEnd, 0, 1);
+
+    photo.style.opacity =
+      smoothstep(linear);
+  });
 }
 
 update();
