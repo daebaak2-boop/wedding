@@ -724,13 +724,13 @@ html,body{
 
 .letter-copy{
   position:absolute;
-  top:7%;
+  top:60%;
   left:50%;
   width:min(86%, 440px);
   transform:translateX(-50%);
   color:#fff;
   font-family:"나눔손글씨 엉겅퀴체","나눔손글씨엉겅퀴체","nanum-handwritting-eonggeongkwiche",cursive;
-  font-size:clamp(26px, 7vw, 36px);
+  font-size:clamp(32px, 7vw, 36px);
   line-height:1.45;
   letter-spacing:0;
   white-space:pre-line;
@@ -742,6 +742,11 @@ html,body{
 
 .letter-copy.show{
   opacity:1;
+}
+
+.letter-section.outro{
+  opacity:0;
+  transition:opacity .55s ease;
 }
 
 .venue-story{
@@ -782,7 +787,9 @@ html,body{
 
 .venue-copy{
   position:absolute;
-  inset:auto 20px 8%;
+  top:30%;
+  right:20px;
+  left:20px;
   z-index:1;
   color:#fff;
   text-align:center;
@@ -2107,6 +2114,13 @@ function updateLetters(){
 
   const activeStep =
     Math.min(scrollStep, unlockedStep);
+  const lastStep =
+    letterSections.length - 1;
+  const lastState =
+    letterSequenceState.get(letterSections[lastStep]);
+  const lastOutro =
+    lastState?.done && scrollStep === lastStep &&
+    window.scrollY > storyTop + stepScroll * lastStep + 1;
 
   letterSections.forEach((sec, i)=>{
     const stepStart =
@@ -2127,6 +2141,11 @@ function updateLetters(){
       sec.dataset.letterText || "";
 
     if(!photo || !copy) return;
+
+    sec.classList.toggle(
+      "outro",
+      i === lastStep && lastOutro
+    );
 
     if(i === activeStep && window.scrollY > storyTop){
       let state =
