@@ -744,6 +744,110 @@ html,body{
   opacity:1;
 }
 
+.venue-story{
+  position:relative;
+  height:calc(100vh + 960px);
+  background:#fffaf6;
+}
+
+.venue-sticky{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+}
+
+.venue-frame{
+  position:relative;
+  width:100%;
+  max-width:560px;
+  height:100%;
+  margin:0 auto;
+  overflow:hidden;
+}
+
+.venue-photo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity .65s ease;
+}
+
+.venue-photo.show{
+  opacity:1;
+}
+
+.venue-copy{
+  position:absolute;
+  inset:auto 20px 8%;
+  z-index:1;
+  color:#fff;
+  text-align:center;
+  text-shadow:0 2px 12px rgba(0,0,0,.6);
+}
+
+.venue-prompt,
+.venue-details{
+  opacity:0;
+  transform:translateY(12px);
+  transition:
+    opacity .55s ease,
+    transform .55s ease;
+}
+
+.venue-prompt.show,
+.venue-details.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.venue-prompt{
+  margin:0 0 18px;
+  font-family:"Nanum EongGeongGwiCe","Nanum Eonggeongkwiche","nanum-handwritting-eonggeongkwiche",cursive;
+  font-size:clamp(30px, 7.5vw, 42px);
+  line-height:1.35;
+}
+
+.venue-address{
+  margin:0;
+  font-size:clamp(16px, 4.2vw, 21px);
+  line-height:1.55;
+  font-weight:600;
+  word-break:keep-all;
+}
+
+.venue-name{
+  display:block;
+  margin-top:3px;
+  font-size:clamp(14px, 3.7vw, 18px);
+  font-weight:400;
+}
+
+.venue-map-buttons{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:14px;
+}
+
+.venue-map-buttons a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:0 16px;
+  border:1px solid rgba(255,255,255,.62);
+  border-radius:999px;
+  background:rgba(255,255,255,.9);
+  color:#2f2a26;
+  text-decoration:none;
+  text-shadow:none;
+  font-size:14px;
+}
+
 .story-name{
   display:block;
   font-family:'Gowun Batang',serif;
@@ -925,6 +1029,27 @@ html,body{
 
 </section>
 
+<section class="venue-story">
+  <div class="venue-sticky">
+    <div class="venue-frame">
+      <img class="venue-photo" src="./location.jpg" alt="" loading="lazy" decoding="async">
+      <div class="venue-copy">
+        <p class="venue-prompt">아래의 주소로 와주세요.</p>
+        <div class="venue-details">
+          <p class="venue-address">
+            경기도 고양시 덕양구 고양대로 2002번길 29
+            <span class="venue-name">아이라이크마운틴</span>
+          </p>
+          <div class="venue-map-buttons">
+            <a href="https://map.kakao.com/?q=%EC%95%84%EC%9D%B4%EB%9D%BC%EC%9D%B4%ED%81%AC%EB%A7%88%EC%9A%B4%ED%8B%B4" target="_blank" rel="noopener">카카오맵</a>
+            <a href="https://map.naver.com/p/search/%EC%95%84%EC%9D%B4%EB%9D%BC%EC%9D%B4%ED%81%AC%EB%A7%88%EC%9A%B4%ED%8B%B4" target="_blank" rel="noopener">네이버지도</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="dday">
   <div class="dday-inner">
 
@@ -1006,6 +1131,9 @@ const LETTER_PHOTO_FADE_MS = 650;
 const LETTER_HOLD_MS = 500;
 const LETTER_WRITE_MS = 1600;
 const LETTER_COPY_GAP_MS = 500;
+const VENUE_PHOTO_FADE_MS = 650;
+const VENUE_COPY_FADE_MS = 550;
+const VENUE_HOLD_MS = 500;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let greetingOutStartProgress = 0;
@@ -1022,6 +1150,10 @@ const storySequenceState = {
   },
 };
 const letterSequenceState = new Map();
+const venueSequenceState = {
+  startedAt: 0,
+  done: false,
+};
 let boyBrakeLockY = 0;
 let boyScrollLockActive = false;
 let letterBrakeLockY = 0;
@@ -1122,6 +1254,7 @@ function stopBoyBrake(){
 function startLetterBrake(lockY){
   letterBrakeLockY = lockY;
   letterScrollLockActive = true;
+  holdLetterBrakePosition();
 }
 
 function holdLetterBrakePosition(){
@@ -1143,6 +1276,11 @@ function hasActiveLetterSequence(){
     if(state.startedAt && !state.done) return true;
   }
   return false;
+}
+
+function hasActiveVenueSequence(){
+  return venueSequenceState.startedAt &&
+    !venueSequenceState.done;
 }
 
 function isLetterStoryInView(){
@@ -1216,13 +1354,18 @@ function blockDetailsBrakeScroll(event){
       boyScrollLockActive ||
       hasActiveStorySequence()
     );
+  const letterBrakeActive =
+    letterScrollLockActive ||
+    hasActiveLetterSequence() ||
+    hasActiveVenueSequence();
 
   if(
     storyBrakeActive ||
-    letterScrollLockActive ||
-    hasActiveLetterSequence()
+    letterBrakeActive
   ){
-    if(!letterScrollLockActive){
+    if(letterBrakeActive){
+      holdLetterBrakePosition();
+    }else{
       holdBoyBrakePosition();
     }
     event.preventDefault();
@@ -1259,13 +1402,18 @@ function blockDetailsBrakeKeys(event){
       boyScrollLockActive ||
       hasActiveStorySequence()
     );
+  const letterBrakeActive =
+    letterScrollLockActive ||
+    hasActiveLetterSequence() ||
+    hasActiveVenueSequence();
 
   if(
     storyBrakeActive ||
-    letterScrollLockActive ||
-    hasActiveLetterSequence()
+    letterBrakeActive
   ){
-    if(!letterScrollLockActive){
+    if(letterBrakeActive){
+      holdLetterBrakePosition();
+    }else{
       holdBoyBrakePosition();
     }
     event.preventDefault();
@@ -1552,6 +1700,7 @@ function update(){
 
   updateStory();
   updateLetters();
+  updateVenue();
 }
 
 window.addEventListener(
@@ -1693,6 +1842,8 @@ function updateStory(){
           sec.id === "storyGirl";
 
         if(!sequenceState.startedAt){
+          if(rect.bottom <= 0) return;
+
           sequenceState.startedAt = now;
           sequenceState.done = false;
           startBoyBrake(revealY);
@@ -1808,6 +1959,8 @@ const letterSections =
   document.querySelectorAll(".letter-section");
 const letterStory =
   document.querySelector(".letter-story");
+const venueStory =
+  document.querySelector(".venue-story");
 
 function writeLetterText(copy, text, ratio){
   const length =
@@ -1819,7 +1972,8 @@ function writeLetterText(copy, text, ratio){
 function writeLetterCopy(copy, sec, text, elapsed){
   const hasCopyGap =
     sec === letterSections[0] ||
-    sec === letterSections[1];
+    sec === letterSections[1] ||
+    sec === letterSections[3];
 
   if(!hasCopyGap){
     writeLetterText(copy, text, elapsed / LETTER_WRITE_MS);
@@ -1876,12 +2030,9 @@ function resetLetterSection(sec){
 }
 
 function hideLetterSection(sec){
-  const photo =
-    sec.querySelector(".letter-photo");
   const copy =
     sec.querySelector(".letter-copy");
 
-  if(photo) photo.classList.remove("show");
   if(copy){
     copy.classList.remove("show");
     copy.textContent = "";
@@ -1960,7 +2111,8 @@ function updateLetters(){
         LETTER_PHOTO_FADE_MS + LETTER_HOLD_MS;
       const writeDuration =
         sec === letterSections[0] ||
-        sec === letterSections[1]
+        sec === letterSections[1] ||
+        sec === letterSections[3]
           ? LETTER_WRITE_MS + LETTER_COPY_GAP_MS
           : LETTER_WRITE_MS;
       const releaseAt =
@@ -1999,6 +2151,69 @@ function updateLetters(){
       resetLetterSection(sec);
     }
   });
+}
+
+function updateVenue(){
+  if(!venueStory) return;
+
+  const rect =
+    venueStory.getBoundingClientRect();
+  const scrollable =
+    venueStory.offsetHeight - window.innerHeight;
+  const progress =
+    clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
+  const photo =
+    venueStory.querySelector(".venue-photo");
+  const prompt =
+    venueStory.querySelector(".venue-prompt");
+  const details =
+    venueStory.querySelector(".venue-details");
+
+  if(!photo || !prompt || !details) return;
+
+  if(progress <= 0){
+    if(!venueSequenceState.done){
+      venueSequenceState.startedAt = 0;
+      photo.classList.remove("show");
+      prompt.classList.remove("show");
+      details.classList.remove("show");
+    }
+    return;
+  }
+
+  if(!venueSequenceState.startedAt){
+    const lockY =
+      window.scrollY;
+    venueSequenceState.startedAt =
+      performance.now();
+    startLetterBrake(lockY);
+  }
+
+  photo.classList.add("show");
+
+  const elapsed =
+    performance.now() - venueSequenceState.startedAt;
+  const promptAt =
+    VENUE_PHOTO_FADE_MS;
+  const detailsAt =
+    promptAt + VENUE_COPY_FADE_MS + VENUE_HOLD_MS;
+  const releaseAt =
+    detailsAt + VENUE_COPY_FADE_MS + VENUE_HOLD_MS;
+
+  if(elapsed >= promptAt){
+    prompt.classList.add("show");
+  }
+
+  if(elapsed >= detailsAt){
+    details.classList.add("show");
+  }
+
+  if(elapsed >= releaseAt){
+    venueSequenceState.done = true;
+    stopLetterBrake();
+  }else{
+    requestAnimationFrame(update);
+  }
 }
 
 update();
