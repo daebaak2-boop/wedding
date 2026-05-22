@@ -553,20 +553,44 @@ html,body{
 
 .closing.passed{
   opacity:0;
+  transition:opacity .5s ease;
+}
+
+.closing.swimming{
+  background:transparent;
+}
+
+.closing.swimming .closing-swim{
+  opacity:0;
 }
 
 .closing p{
-  color:#2f2a26;
+  position:relative;
+  z-index:1;
+  color:#fff;
   font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
   font-size:clamp(32px, 7vw, 42px);
   line-height:1.45;
   text-align:center;
+  transform:translateY(-150px);
   word-break:keep-all;
+}
+
+.closing-swim{
+  position:absolute;
+  inset:0;
+  width:100%;
+  max-width:560px;
+  height:100%;
+  margin:0 auto;
+  object-fit:cover;
+  object-position:center 40%;
+  transform:scale(1.04);
+  transition:opacity .18s ease;
 }
 
 .swim-story{
   position:relative;
-  height:calc(100vh + 4500px);
   background:#fffaf6;
 }
 
@@ -1313,27 +1337,28 @@ html,body{
 </section>
 
 <section class="closing">
+  <img class="closing-swim" src="./swim1.jpg" alt="" loading="lazy" decoding="async">
   <p>숨 참고 기다리겠습니다.</p>
 </section>
 
 <section class="swim-story">
   <div class="swim-sticky">
     <div class="swim-frame">
-      <img class="swim-photo" src="./swim1.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim2.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim3.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim4.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim5.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim6.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim7.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim8.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim9.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim10.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim11.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim12.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim13.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim14.jpg" alt="" loading="lazy" decoding="async">
-      <img class="swim-photo" src="./swim15.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" src="./swim1.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim2.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim3.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim4.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim5.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim6.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim7.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim8.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim9.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim10.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim11.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim12.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim13.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim14.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim15.jpg" alt="" decoding="async">
     </div>
   </div>
 </section>
@@ -1683,10 +1708,10 @@ function startSwimIfNeeded(){
     !closingSequenceState.shownAt ||
     !closing ||
     !swimStory ||
-    closing.classList.contains("passed")
+    closing.classList.contains("swimming")
   ) return false;
 
-  closing.classList.add("passed");
+  closing.classList.add("swimming");
   window.scrollTo(0, swimStory.offsetTop + 1);
   updateSwim();
   return true;
@@ -2383,6 +2408,24 @@ const swimStory =
 const swimPhotos =
   document.querySelectorAll(".swim-photo");
 
+function loadSwimPhoto(photo){
+  if(!photo.dataset.src) return;
+
+  photo.src = photo.dataset.src;
+  photo.removeAttribute("data-src");
+}
+
+function prepareSwimPhotos(count){
+  swimPhotos.forEach((photo, index)=>{
+    if(index < count) loadSwimPhoto(photo);
+  });
+}
+
+if(swimStory){
+  swimStory.style.height =
+    `calc(${swimPhotos.length * 40 + 150}vh)`;
+}
+
 function writeLetterText(copy, text, ratio){
   const length =
     Math.round(text.length * clamp(ratio, 0, 1));
@@ -2804,7 +2847,7 @@ function updateWelcome(){
     closingSequenceState.startedAt = 0;
     closingSequenceState.shownAt = 0;
     closingSequenceState.done = false;
-    if(closing) closing.classList.remove("show", "passed");
+    if(closing) closing.classList.remove("show", "passed", "swimming");
     return;
   }
 
@@ -2863,6 +2906,7 @@ function updateWelcome(){
         welcomeSequenceState.outroDone = true;
         closingSequenceState.startedAt = now;
         if(closing) closing.classList.add("show");
+        prepareSwimPhotos(6);
         requestAnimationFrame(update);
       }else{
         requestAnimationFrame(update);
@@ -2914,9 +2958,9 @@ function updateSwim(){
   const progress =
     clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
   const photoStep =
-    1 / swimPhotos.length;
+    .72 / swimPhotos.length;
 
-  if(progress > 0){
+  if(progress >= 5 * photoStep + photoStep * .35){
     closing.classList.add("passed");
   }
 
@@ -2927,6 +2971,11 @@ function updateSwim(){
       isFirst ? 0 : index * photoStep - photoStep * .35;
     const fadeInEnd =
       isFirst ? 0 : index * photoStep + photoStep * .35;
+
+    if(progress >= fadeInStart - photoStep * 2){
+      loadSwimPhoto(photo);
+    }
+
     const linear =
       isFirst
         ? progress > 0 ? 1 : 0
