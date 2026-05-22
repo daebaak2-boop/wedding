@@ -1119,6 +1119,7 @@ const DETAILS_HOLD_MS = 1000;
 const GREETING_SCROLL_FADE = 0.08;
 const INTRO_OUTRO_FADE_MS = 450;
 const FINAL_PHOTO_FADE_PX = 1200;
+const FINAL_PHOTO_FADE_MS = 1000;
 const INTRO_TO_STORY_GAP_PX = 500;
 const STORY_FACE_FADE_MS = 650;
 const BOY_SHRINK_HOLD_MS = 200;
@@ -1136,6 +1137,8 @@ const VENUE_COPY_FADE_MS = 550;
 const VENUE_HOLD_MS = 500;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
+let finalPhotoFadeStartedAt = 0;
+let finalPhotoFadeDone = false;
 let greetingOutStartProgress = 0;
 let detailsBrakeActive = false;
 let introHasFinished = false;
@@ -1490,22 +1493,50 @@ function updateIntro(){
   const photoStep = 0.72 / N_INTRO;
   const finalPhotoIndex = N_INTRO - 1;
   const finalPhotoFadeStart =
-    finalPhotoIndex * photoStep - photoStep * 0.35;
+    finalPhotoIndex * photoStep + photoStep * 0.35;
   const finalPhotoFadeEnd =
     finalPhotoFadeStart +
     FINAL_PHOTO_FADE_PX / Math.max(scrollable, 1);
   const run4VisibleAt =
     3 * photoStep + photoStep * 0.35;
   const textSequenceTrigger =
-    Math.min(finalPhotoFadeEnd + 0.005, 0.995);
+    Math.min(finalPhotoFadeStart + 0.005, 0.995);
   const visualProgress =
     introHasFinished && progress < 0.999
       ? Math.max(progress, textSequenceTrigger)
       : progress;
   const sequenceGateY =
     introTop + scrollable * textSequenceTrigger;
+  const finalPhotoGateY =
+    introTop + scrollable * finalPhotoFadeStart;
 
   if(
+    progress >= finalPhotoFadeStart &&
+    !finalPhotoFadeStartedAt
+  ){
+    finalPhotoFadeStartedAt = performance.now();
+  }
+
+  const finalPhotoFadeRatio =
+    finalPhotoFadeStartedAt
+      ? clamp(
+          (performance.now() - finalPhotoFadeStartedAt) /
+            FINAL_PHOTO_FADE_MS,
+          0,
+          1
+        )
+      : 0;
+
+  if(finalPhotoFadeRatio >= 1){
+    finalPhotoFadeDone = true;
+  }else if(finalPhotoFadeStartedAt){
+    window.scrollTo(0, finalPhotoGateY);
+    progress = finalPhotoFadeStart;
+    requestAnimationFrame(update);
+  }
+
+  if(
+    finalPhotoFadeDone &&
     progress >= textSequenceTrigger &&
     introTextState === "idle"
   ){
@@ -1555,7 +1586,9 @@ function updateIntro(){
 
     const linear = isFirst
       ? 1
-      : lerp(visualProgress, fadeInStart, fadeInEnd, 0, 1);
+      : isFinalPhoto
+        ? finalPhotoFadeRatio
+        : lerp(visualProgress, fadeInStart, fadeInEnd, 0, 1);
 
     el.style.opacity =
       smoothstep(linear);
@@ -2029,9 +2062,15 @@ function resetLetterSection(sec){
   }
 }
 
-function hideLetterSection(sec){
+function hideLetterSection(sec, hidePhoto){
+  const photo =
+    sec.querySelector(".letter-photo");
   const copy =
     sec.querySelector(".letter-copy");
+
+  if(hidePhoto && photo){
+    photo.classList.remove("show");
+  }
 
   if(copy){
     copy.classList.remove("show");
@@ -2143,7 +2182,7 @@ function updateLetters(){
           copy.classList.add("show");
           copy.textContent = text;
         }else{
-          hideLetterSection(sec);
+          hideLetterSection(sec, i > activeStep);
         }
         return;
       }
