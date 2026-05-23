@@ -1286,37 +1286,25 @@ html,body{
   </div>
 </section>
 
-<section class="welcome-story">
-  <div class="welcome-sticky">
-    <div class="welcome-frame">
-      <img class="welcome-photo" src="./welcome.jpg" alt="" loading="lazy" decoding="async">
-      <div class="welcome-copy">
-        <p class="welcome-date">6월 27일 토요일 오후 5시</p>
-        <p class="welcome-letter"></p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="swim-story">
   <div class="swim-sticky">
     <div class="swim-frame">
-      <img class="swim-photo" src="./swim1.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim2.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim3.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim4.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim5.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim6.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim7.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim8.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim9.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim10.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim11.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim12.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim13.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim14.jpg" alt="" decoding="async">
-      <img class="swim-photo" data-src="./swim15.jpg" alt="" decoding="async">
-      <p class="swim-caption">숨 참고 기다리겠습니다.</p>
+      <img class="swim-photo" src="./welcome.jpg" alt="" decoding="async">
+      <img class="swim-photo" data-src="./swim1.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim2.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim3.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim4.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim5.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim6.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim7.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim8.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim9.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim10.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim11.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim12.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim13.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim14.jpg" alt="" loading="lazy" decoding="async">
+      <img class="swim-photo" data-src="./swim15.jpg" alt="" loading="lazy" decoding="async">
     </div>
   </div>
 </section>
@@ -2842,7 +2830,7 @@ function updateSwim(){
   if(
     !swimStory ||
     !swimPhotos.length ||
-    !welcomeSequenceState.outroDone
+    !ddayRevealDone
   ) return;
 
   const rect =
@@ -2853,6 +2841,12 @@ function updateSwim(){
     clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
   const photoStep =
     .72 / swimPhotos.length;
+  const dday =
+    document.querySelector(".dday");
+
+  if(dday){
+    dday.classList.toggle("outro", progress > 0);
+  }
 
   if(swimCaption){
     const captionOutStart =
