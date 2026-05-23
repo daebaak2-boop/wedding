@@ -579,7 +579,7 @@ html,body{
   font-size:clamp(32px, 7vw, 42px);
   line-height:1.45;
   text-align:center;
-  transform:translate(-50%, calc(-50% - 150px));
+  transform:translate(-50%, calc(-50% - 200px));
   word-break:keep-all;
   opacity:0;
   pointer-events:none;
@@ -594,6 +594,24 @@ html,body{
 .swim-caption-letter{
   margin:0;
   white-space:pre-line;
+}
+
+.swim-breath-caption{
+  position:absolute;
+  top:50%;
+  left:50%;
+  z-index:2;
+  width:100%;
+  padding:0 32px;
+  color:#fff;
+  font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
+  font-size:clamp(32px, 7vw, 42px);
+  line-height:1.45;
+  text-align:center;
+  transform:translate(-50%, calc(-50% - 150px));
+  word-break:keep-all;
+  opacity:0;
+  pointer-events:none;
 }
 
 /* ===== Story (boy / girl) ===== */
@@ -1318,9 +1336,9 @@ html,body{
       <img class="swim-photo" data-src="./swim15.jpg" alt="" loading="lazy" decoding="async">
       <div class="swim-caption">
         <p class="swim-caption-date">6월 27일 토요일 오후 5시</p>
-        <p class="swim-caption-letter">모두가 주인공입니다.
-예쁘게 입고 와주세요!</p>
+        <p class="swim-caption-letter"></p>
       </div>
+      <p class="swim-breath-caption">숨 참고 기다리겠습니다~</p>
     </div>
   </div>
 </section>
@@ -2337,6 +2355,12 @@ const swimPhotos =
   document.querySelectorAll(".swim-photo");
 const swimCaption =
   document.querySelector(".swim-caption");
+const swimCaptionDate =
+  document.querySelector(".swim-caption-date");
+const swimCaptionLetter =
+  document.querySelector(".swim-caption-letter");
+const swimBreathCaption =
+  document.querySelector(".swim-breath-caption");
 
 function loadSwimPhoto(photo){
   if(!photo.dataset.src) return;
@@ -2353,7 +2377,7 @@ function prepareSwimPhotos(count){
 
 if(swimStory){
   swimStory.style.height =
-    `calc(${swimPhotos.length * 40 + 150}vh)`;
+    `calc(${swimPhotos.length * 40 + 250}vh)`;
 }
 
 function writeLetterText(copy, text, ratio){
@@ -2877,6 +2901,15 @@ function updateSwim(){
     if(swimCaption){
       swimCaption.style.opacity = 0;
     }
+    if(swimCaptionDate){
+      swimCaptionDate.style.opacity = 0;
+    }
+    if(swimCaptionLetter){
+      swimCaptionLetter.textContent = "";
+    }
+    if(swimBreathCaption){
+      swimBreathCaption.style.opacity = 0;
+    }
     return;
   }
 
@@ -2893,7 +2926,9 @@ function updateSwim(){
     const copyAt =
       WELCOME_PHOTO_FADE_MS;
     const releaseAt =
-      copyAt + WELCOME_COPY_FADE_MS + WELCOME_HOLD_MS;
+      copyAt + WELCOME_COPY_FADE_MS + LETTER_WRITE_MS + WELCOME_HOLD_MS;
+    const welcomeLetterText =
+      "모두가 주인공입니다.\n예쁘게 입고 와주세요!";
 
     swimPhotos.forEach((photo, index)=>{
       photo.style.opacity =
@@ -2908,8 +2943,25 @@ function updateSwim(){
           clamp((elapsed - copyAt) / WELCOME_COPY_FADE_MS, 0, 1)
         );
     }
+    if(swimCaptionDate){
+      swimCaptionDate.style.opacity =
+        smoothstep(
+          clamp((elapsed - copyAt) / WELCOME_COPY_FADE_MS, 0, 1)
+        );
+    }
+    if(swimCaptionLetter){
+      writeLetterText(
+        swimCaptionLetter,
+        welcomeLetterText,
+        (elapsed - copyAt - WELCOME_COPY_FADE_MS) / LETTER_WRITE_MS
+      );
+    }
 
     if(elapsed >= releaseAt){
+      if(swimCaptionLetter){
+        swimCaptionLetter.textContent =
+          welcomeLetterText;
+      }
       welcomeSequenceState.done = true;
       welcomeSequenceState.releaseY =
         window.scrollY;
@@ -2927,6 +2979,23 @@ function updateSwim(){
         : 1 - smoothstep(
           lerp(progress, swimStartProgress, swimStartProgress + 0.04, 0, 1)
         );
+  }
+  if(swimBreathCaption){
+    const swim5Start =
+      4 * photoStep - photoStep * .35;
+    const swim5End =
+      4 * photoStep + photoStep * .35;
+    const breathIn =
+      smoothstep(
+        lerp(swimProgress, 0, photoStep * .35, 0, 1)
+      );
+    const breathOut =
+      smoothstep(
+        lerp(swimProgress, swim5Start, swim5End, 0, 1)
+      );
+
+    swimBreathCaption.style.opacity =
+      breathIn * (1 - breathOut);
   }
 
   swimPhotos.forEach((photo, index)=>{
