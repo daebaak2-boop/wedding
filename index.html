@@ -2557,7 +2557,7 @@ function updateLetters(){
           done: false,
         };
         letterSequenceState.set(sec, state);
-        startLetterBrake(lockY);
+        startLetterBrake(window.scrollY);
       }
 
       photo.classList.add("show");
