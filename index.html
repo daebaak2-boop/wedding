@@ -533,62 +533,6 @@ html,body{
   opacity:1;
 }
 
-.closing{
-  position:fixed;
-  inset:0;
-  z-index:4;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:32px;
-  background:#fffaf6;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .7s ease;
-}
-
-.closing.show{
-  opacity:1;
-}
-
-.closing.passed{
-  opacity:0;
-  transition:opacity .5s ease;
-}
-
-.closing.swimming{
-  background:transparent;
-}
-
-.closing.swimming .closing-swim{
-  opacity:0;
-}
-
-.closing p{
-  position:relative;
-  z-index:1;
-  color:#fff;
-  font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
-  font-size:clamp(32px, 7vw, 42px);
-  line-height:1.45;
-  text-align:center;
-  transform:translateY(-150px);
-  word-break:keep-all;
-}
-
-.closing-swim{
-  position:absolute;
-  inset:0;
-  width:100%;
-  max-width:560px;
-  height:100%;
-  margin:0 auto;
-  object-fit:cover;
-  object-position:center 40%;
-  transform:scale(1.04);
-  transition:opacity .18s ease;
-}
-
 .swim-story{
   position:relative;
   background:#fffaf6;
@@ -621,6 +565,24 @@ html,body{
   transform-origin:center center;
   opacity:0;
   will-change:opacity, transform;
+}
+
+.swim-caption{
+  position:absolute;
+  top:50%;
+  left:50%;
+  z-index:2;
+  width:100%;
+  padding:0 32px;
+  color:#fff;
+  font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
+  font-size:clamp(32px, 7vw, 42px);
+  line-height:1.45;
+  text-align:center;
+  transform:translate(-50%, calc(-50% - 150px));
+  word-break:keep-all;
+  opacity:1;
+  pointer-events:none;
 }
 
 /* ===== Story (boy / girl) ===== */
@@ -1336,11 +1298,6 @@ html,body{
   </div>
 </section>
 
-<section class="closing">
-  <img class="closing-swim" src="./swim1.jpg" alt="" loading="lazy" decoding="async">
-  <p>숨 참고 기다리겠습니다.</p>
-</section>
-
 <section class="swim-story">
   <div class="swim-sticky">
     <div class="swim-frame">
@@ -1359,6 +1316,7 @@ html,body{
       <img class="swim-photo" data-src="./swim13.jpg" alt="" decoding="async">
       <img class="swim-photo" data-src="./swim14.jpg" alt="" decoding="async">
       <img class="swim-photo" data-src="./swim15.jpg" alt="" decoding="async">
+      <p class="swim-caption">숨 참고 기다리겠습니다.</p>
     </div>
   </div>
 </section>
@@ -1422,8 +1380,6 @@ const WELCOME_PHOTO_FADE_MS = 650;
 const WELCOME_COPY_FADE_MS = 550;
 const WELCOME_HOLD_MS = 500;
 const WELCOME_OUTRO_FADE_MS = 500;
-const CLOSING_FADE_MS = 700;
-const CLOSING_HOLD_MS = 500;
 let introTextState = "idle";
 let introTextStateStartedAt = 0;
 let finalPhotoFadeStartedAt = 0;
@@ -1463,11 +1419,6 @@ const welcomeSequenceState = {
   releaseY: 0,
   outroStartedAt: 0,
   outroDone: false,
-};
-const closingSequenceState = {
-  startedAt: 0,
-  shownAt: 0,
-  done: false,
 };
 let boyBrakeLockY = 0;
 let boyScrollLockActive = false;
@@ -1603,11 +1554,6 @@ function hasActiveWelcomeSequence(){
     !welcomeSequenceState.done;
 }
 
-function hasActiveClosingSequence(){
-  return closingSequenceState.startedAt &&
-    !closingSequenceState.done;
-}
-
 function isLetterStoryInView(){
   const firstLetter =
     document.querySelector(".letter-section");
@@ -1710,21 +1656,6 @@ function startWelcomeOutroIfNeeded(){
   return true;
 }
 
-function startSwimIfNeeded(){
-  if(
-    !closingSequenceState.done ||
-    !closingSequenceState.shownAt ||
-    !closing ||
-    !swimStory ||
-    closing.classList.contains("swimming")
-  ) return false;
-
-  closing.classList.add("swimming");
-  window.scrollTo(0, swimStory.offsetTop + 1);
-  updateSwim();
-  return true;
-}
-
 function blockDetailsBrakeScroll(event){
   const storyBrakeActive =
     !isLetterStoryInView() &&
@@ -1736,8 +1667,7 @@ function blockDetailsBrakeScroll(event){
     letterScrollLockActive ||
     hasActiveLetterSequence() ||
     hasActiveVenueSequence() ||
-    hasActiveWelcomeSequence() ||
-    hasActiveClosingSequence();
+    hasActiveWelcomeSequence();
 
   if(
     storyBrakeActive ||
@@ -1758,11 +1688,6 @@ function blockDetailsBrakeScroll(event){
   }
 
   if(startWelcomeOutroIfNeeded()){
-    event.preventDefault();
-    return;
-  }
-
-  if(startSwimIfNeeded()){
     event.preventDefault();
     return;
   }
@@ -1801,8 +1726,7 @@ function blockDetailsBrakeKeys(event){
     letterScrollLockActive ||
     hasActiveLetterSequence() ||
     hasActiveVenueSequence() ||
-    hasActiveWelcomeSequence() ||
-    hasActiveClosingSequence();
+    hasActiveWelcomeSequence();
 
   if(
     storyBrakeActive ||
@@ -1823,11 +1747,6 @@ function blockDetailsBrakeKeys(event){
   }
 
   if(startWelcomeOutroIfNeeded()){
-    event.preventDefault();
-    return;
-  }
-
-  if(startSwimIfNeeded()){
     event.preventDefault();
     return;
   }
@@ -2145,7 +2064,6 @@ function update(){
   updateVenue();
   updateDdayReveal();
   updateWelcome();
-  updateClosing();
   updateSwim();
 }
 
@@ -2409,12 +2327,12 @@ const venueStory =
   document.querySelector(".venue-story");
 const welcomeStory =
   document.querySelector(".welcome-story");
-const closing =
-  document.querySelector(".closing");
 const swimStory =
   document.querySelector(".swim-story");
 const swimPhotos =
   document.querySelectorAll(".swim-photo");
+const swimCaption =
+  document.querySelector(".swim-caption");
 
 function loadSwimPhoto(photo){
   if(!photo.dataset.src) return;
@@ -2852,10 +2770,6 @@ function updateWelcome(){
     date.classList.remove("show");
     letter.classList.remove("show");
     letter.textContent = "";
-    closingSequenceState.startedAt = 0;
-    closingSequenceState.shownAt = 0;
-    closingSequenceState.done = false;
-    if(closing) closing.classList.remove("show", "passed", "swimming");
     return;
   }
 
@@ -2899,7 +2813,9 @@ function updateWelcome(){
     letter.textContent = letterText;
     welcomeSequenceState.done = true;
     welcomeSequenceState.releaseY =
-      window.scrollY;
+      welcomeStory.offsetTop +
+      welcomeStory.offsetHeight -
+      window.innerHeight;
     stopLetterBrake();
   }else{
     requestAnimationFrame(update);
@@ -2912,9 +2828,8 @@ function updateWelcome(){
         WELCOME_OUTRO_FADE_MS
       ){
         welcomeSequenceState.outroDone = true;
-        closingSequenceState.startedAt = now;
-        if(closing) closing.classList.add("show");
         prepareSwimPhotos(6);
+        stopLetterBrake();
         requestAnimationFrame(update);
       }else{
         requestAnimationFrame(update);
@@ -2923,40 +2838,11 @@ function updateWelcome(){
   }
 }
 
-function updateClosing(){
-  if(
-    !closing ||
-    !closingSequenceState.startedAt ||
-    closingSequenceState.done
-  ) return;
-
-  const now =
-    performance.now();
-
-  if(
-    !closingSequenceState.shownAt &&
-    now - closingSequenceState.startedAt >= CLOSING_FADE_MS
-  ){
-    closingSequenceState.shownAt = now;
-  }
-
-  if(
-    closingSequenceState.shownAt &&
-    now - closingSequenceState.shownAt >= CLOSING_HOLD_MS
-  ){
-    closingSequenceState.done = true;
-    stopLetterBrake();
-  }else{
-    holdLetterBrakePosition();
-    requestAnimationFrame(update);
-  }
-}
-
 function updateSwim(){
   if(
     !swimStory ||
     !swimPhotos.length ||
-    !closingSequenceState.done
+    !welcomeSequenceState.outroDone
   ) return;
 
   const rect =
@@ -2968,8 +2854,15 @@ function updateSwim(){
   const photoStep =
     .72 / swimPhotos.length;
 
-  if(progress >= 5 * photoStep + photoStep * .35){
-    closing.classList.add("passed");
+  if(swimCaption){
+    const captionOutStart =
+      5 * photoStep - photoStep * .35;
+    const captionOutEnd =
+      5 * photoStep + photoStep * .35;
+    swimCaption.style.opacity =
+      1 - smoothstep(
+        lerp(progress, captionOutStart, captionOutEnd, 0, 1)
+      );
   }
 
   swimPhotos.forEach((photo, index)=>{
