@@ -574,15 +574,26 @@ html,body{
   z-index:2;
   width:100%;
   padding:0 32px;
-  color:#fff;
+  color:#111;
   font-family:"나눔손글씨 대광유리","Nanum DaeGwangYuRiCe","nanum-handwritting-daegwang-yuli",cursive;
   font-size:clamp(32px, 7vw, 42px);
   line-height:1.45;
   text-align:center;
   transform:translate(-50%, calc(-50% - 150px));
   word-break:keep-all;
-  opacity:1;
+  opacity:0;
   pointer-events:none;
+}
+
+.swim-caption-date{
+  margin:0 0 28px;
+  font-size:clamp(24px, 5vw, 32px);
+  line-height:1.4;
+}
+
+.swim-caption-letter{
+  margin:0;
+  white-space:pre-line;
 }
 
 /* ===== Story (boy / girl) ===== */
@@ -1305,6 +1316,11 @@ html,body{
       <img class="swim-photo" data-src="./swim13.jpg" alt="" loading="lazy" decoding="async">
       <img class="swim-photo" data-src="./swim14.jpg" alt="" loading="lazy" decoding="async">
       <img class="swim-photo" data-src="./swim15.jpg" alt="" loading="lazy" decoding="async">
+      <div class="swim-caption">
+        <p class="swim-caption-date">6월 27일 토요일 오후 5시</p>
+        <p class="swim-caption-letter">모두가 주인공입니다.
+예쁘게 입고 와주세요!</p>
+      </div>
     </div>
   </div>
 </section>
@@ -2839,8 +2855,12 @@ function updateSwim(){
     swimStory.offsetHeight - window.innerHeight;
   const progress =
     clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
+  const swimStartProgress =
+    0.12;
+  const swimProgress =
+    clamp((progress - swimStartProgress) / (1 - swimStartProgress), 0, 1);
   const photoStep =
-    .72 / swimPhotos.length;
+    .72 / Math.max(swimPhotos.length - 1, 1);
   const dday =
     document.querySelector(".dday");
 
@@ -2848,33 +2868,90 @@ function updateSwim(){
     dday.classList.toggle("outro", progress > 0);
   }
 
+  if(progress <= 0 && !welcomeSequenceState.done){
+    welcomeSequenceState.startedAt = 0;
+    welcomeSequenceState.releaseY = 0;
+    swimPhotos.forEach((photo)=>{
+      photo.style.opacity = 0;
+    });
+    if(swimCaption){
+      swimCaption.style.opacity = 0;
+    }
+    return;
+  }
+
+  if(progress > 0 && !welcomeSequenceState.startedAt){
+    welcomeSequenceState.startedAt =
+      performance.now();
+    welcomeSequenceState.done = false;
+    startLetterBrake(window.scrollY);
+  }
+
+  if(welcomeSequenceState.startedAt && !welcomeSequenceState.done){
+    const elapsed =
+      performance.now() - welcomeSequenceState.startedAt;
+    const copyAt =
+      WELCOME_PHOTO_FADE_MS;
+    const releaseAt =
+      copyAt + WELCOME_COPY_FADE_MS + WELCOME_HOLD_MS;
+
+    swimPhotos.forEach((photo, index)=>{
+      photo.style.opacity =
+        index === 0
+          ? smoothstep(clamp(elapsed / WELCOME_PHOTO_FADE_MS, 0, 1))
+          : 0;
+    });
+
+    if(swimCaption){
+      swimCaption.style.opacity =
+        smoothstep(
+          clamp((elapsed - copyAt) / WELCOME_COPY_FADE_MS, 0, 1)
+        );
+    }
+
+    if(elapsed >= releaseAt){
+      welcomeSequenceState.done = true;
+      welcomeSequenceState.releaseY =
+        window.scrollY;
+      stopLetterBrake();
+    }else{
+      requestAnimationFrame(update);
+    }
+    return;
+  }
+
   if(swimCaption){
-    const captionOutStart =
-      5 * photoStep - photoStep * .35;
-    const captionOutEnd =
-      5 * photoStep + photoStep * .35;
     swimCaption.style.opacity =
-      1 - smoothstep(
-        lerp(progress, captionOutStart, captionOutEnd, 0, 1)
-      );
+      progress < swimStartProgress
+        ? 1
+        : 1 - smoothstep(
+          lerp(progress, swimStartProgress, swimStartProgress + 0.04, 0, 1)
+        );
   }
 
   swimPhotos.forEach((photo, index)=>{
-    const isFirst =
-      index === 0;
-    const fadeInStart =
-      isFirst ? 0 : index * photoStep - photoStep * .35;
-    const fadeInEnd =
-      isFirst ? 0 : index * photoStep + photoStep * .35;
+    if(index === 0){
+      photo.style.opacity = 1;
+      return;
+    }
 
-    if(progress >= fadeInStart - photoStep * 2){
+    const swimIndex =
+      index - 1;
+    const isFirst =
+      swimIndex === 0;
+    const fadeInStart =
+      isFirst ? 0 : swimIndex * photoStep - photoStep * .35;
+    const fadeInEnd =
+      isFirst ? 0 : swimIndex * photoStep + photoStep * .35;
+
+    if(swimProgress >= fadeInStart - photoStep * 2){
       loadSwimPhoto(photo);
     }
 
     const linear =
       isFirst
-        ? progress > 0 ? 1 : 0
-        : lerp(progress, fadeInStart, fadeInEnd, 0, 1);
+        ? swimProgress > 0 ? 1 : 0
+        : lerp(swimProgress, fadeInStart, fadeInEnd, 0, 1);
 
     photo.style.opacity =
       smoothstep(linear);
