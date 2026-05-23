@@ -579,7 +579,7 @@ html,body{
   font-size:clamp(32px, 7vw, 42px);
   line-height:1.45;
   text-align:center;
-  transform:translate(-50%, calc(-50% - 200px));
+  transform:translate(-50%, calc(-50% - 240px));
   word-break:keep-all;
   opacity:0;
   pointer-events:none;
@@ -1658,7 +1658,7 @@ function startVenueOutroIfNeeded(){
   venueSequenceState.outroStartedAt =
     performance.now();
   venueStory.classList.add("outro");
-  startLetterBrake(venueSequenceState.releaseY);
+  startLetterBrake(window.scrollY);
   requestAnimationFrame(update);
   return true;
 }
