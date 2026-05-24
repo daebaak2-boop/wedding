@@ -2981,26 +2981,30 @@ function updateSwim(){
         );
   }
   if(swimBreathCaption){
+    const swim1In =
+      smoothstep(
+        lerp(swimProgress, 0, photoStep * .35, 0, 1)
+      );
     const swim5Start =
       4 * photoStep - photoStep * .35;
     const swim5End =
       4 * photoStep + photoStep * .35;
-    const breathIn =
-      smoothstep(
-        lerp(swimProgress, 0, photoStep * .35, 0, 1)
-      );
     const breathOut =
       smoothstep(
         lerp(swimProgress, swim5Start, swim5End, 0, 1)
       );
 
     swimBreathCaption.style.opacity =
-      breathIn * (1 - breathOut);
+      swim1In * (1 - breathOut);
   }
 
   swimPhotos.forEach((photo, index)=>{
     if(index === 0){
-      photo.style.opacity = 1;
+      const welcomeOut =
+        smoothstep(
+          lerp(swimProgress, 0, photoStep * .35, 0, 1)
+        );
+      photo.style.opacity = 1 - welcomeOut;
       return;
     }
 
@@ -3018,9 +3022,7 @@ function updateSwim(){
     }
 
     const linear =
-      isFirst
-        ? swimProgress > 0 ? 1 : 0
-        : lerp(swimProgress, fadeInStart, fadeInEnd, 0, 1);
+      lerp(swimProgress, fadeInStart, fadeInEnd, 0, 1);
 
     photo.style.opacity =
       smoothstep(linear);
