@@ -2377,7 +2377,7 @@ function prepareSwimPhotos(count){
 
 if(swimStory){
   swimStory.style.height =
-    `calc(${swimPhotos.length * 40 + 250}vh)`;
+    `calc(${Math.max(swimPhotos.length - 1, 1) * 40 + 120}vh)`;
 }
 
 function writeLetterText(copy, text, ratio){
@@ -2881,11 +2881,11 @@ function updateSwim(){
   const progress =
     clamp(-rect.top / Math.max(scrollable, 1), 0, 1);
   const swimStartProgress =
-    0.12;
+    0;
   const swimProgress =
     clamp((progress - swimStartProgress) / (1 - swimStartProgress), 0, 1);
   const photoStep =
-    .72 / Math.max(swimPhotos.length - 1, 1);
+    .94 / Math.max(swimPhotos.length - 2, 1);
   const dday =
     document.querySelector(".dday");
 
