@@ -1585,6 +1585,42 @@ function isLetterStoryInView(){
   return firstLetter.getBoundingClientRect().top < window.innerHeight;
 }
 
+function getLetterGuardTarget(deltaY){
+  if(!letterStory || deltaY <= 0 || letterOutroDone) return null;
+
+  const storyRect =
+    letterStory.getBoundingClientRect();
+  const storyTop =
+    window.scrollY + storyRect.top;
+  const storyScrollable =
+    letterStory.offsetHeight - window.innerHeight;
+  const storyEnd =
+    storyTop + storyScrollable;
+  const futureY =
+    window.scrollY + deltaY;
+  const lastSection =
+    letterSections[letterSections.length - 1];
+
+  if(
+    letterSequenceState.get(lastSection)?.done ||
+    futureY < storyTop ||
+    window.scrollY > storyEnd
+  ) return null;
+
+  const stepScroll =
+    storyScrollable / Math.max(letterSections.length, 1);
+  let unlockedStep = 0;
+
+  while(
+    unlockedStep < letterSections.length - 1 &&
+    letterSequenceState.get(letterSections[unlockedStep])?.done
+  ){
+    unlockedStep++;
+  }
+
+  return storyTop + stepScroll * unlockedStep + 1;
+}
+
 function resetStorySequence(sectionId, bubble){
   resetBoyMessages(bubble);
   resetBoyBubbleAlignment(bubble);
@@ -1701,6 +1737,16 @@ function blockDetailsBrakeScroll(event){
       holdBoyBrakePosition();
     }
     event.preventDefault();
+    return;
+  }
+
+  const letterGuardTarget =
+    getLetterGuardTarget(event.deltaY || 0);
+
+  if(letterGuardTarget !== null){
+    window.scrollTo(0, letterGuardTarget);
+    event.preventDefault();
+    requestAnimationFrame(update);
     return;
   }
 
