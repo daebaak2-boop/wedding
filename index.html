@@ -2555,9 +2555,10 @@ function updateLetters(){
         state = {
           startedAt: now,
           done: false,
+          lockY: stepStart + 1,
         };
         letterSequenceState.set(sec, state);
-        startLetterBrake(window.scrollY);
+        startLetterBrake(state.lockY);
       }
 
       photo.classList.add("show");
@@ -2586,7 +2587,7 @@ function updateLetters(){
       if(elapsed >= releaseAt){
         copy.textContent = text;
         state.done = true;
-        state.releaseY = window.scrollY;
+        state.releaseY = state.lockY;
         stopLetterBrake();
       }else{
         requestAnimationFrame(update);
