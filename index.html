@@ -2519,6 +2519,19 @@ function updateLetters(){
     }
   }
 
+  const activeStepStart =
+    storyTop + stepScroll * activeStep;
+  const activeState =
+    letterSequenceState.get(letterSections[activeStep]);
+
+  if(
+    !lastOutro &&
+    !activeState?.done &&
+    window.scrollY > activeStepStart + 1
+  ){
+    window.scrollTo(0, activeStepStart + 1);
+  }
+
   letterStory.classList.toggle("outro", lastOutro);
 
   letterSections.forEach((sec, i)=>{
