@@ -2974,6 +2974,7 @@ function updateSwim(){
   }
 
   if(progress > 0 && !welcomeSequenceState.startedAt){
+    prepareSwimPhotos(6);
     welcomeSequenceState.startedAt =
       performance.now();
     welcomeSequenceState.done = false;
@@ -3022,6 +3023,7 @@ function updateSwim(){
         swimCaptionLetter.textContent =
           welcomeLetterText;
       }
+      prepareSwimPhotos(6);
       welcomeSequenceState.done = true;
       welcomeSequenceState.releaseY =
         window.scrollY;
