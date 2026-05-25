@@ -1621,6 +1621,22 @@ function getLetterGuardTarget(deltaY){
   return storyTop + stepScroll * unlockedStep + 1;
 }
 
+function getDdayToSwimTarget(deltaY){
+  if(
+    deltaY <= 0 ||
+    !ddayRevealDone ||
+    welcomeSequenceState.startedAt ||
+    !swimStory
+  ) return null;
+
+  const swimTop =
+    swimStory.offsetTop;
+
+  if(window.scrollY >= swimTop) return null;
+
+  return swimTop + 1;
+}
+
 function resetStorySequence(sectionId, bubble){
   resetBoyMessages(bubble);
   resetBoyBubbleAlignment(bubble);
@@ -1745,6 +1761,16 @@ function blockDetailsBrakeScroll(event){
 
   if(letterGuardTarget !== null){
     window.scrollTo(0, letterGuardTarget);
+    event.preventDefault();
+    requestAnimationFrame(update);
+    return;
+  }
+
+  const ddayToSwimTarget =
+    getDdayToSwimTarget(event.deltaY || 0);
+
+  if(ddayToSwimTarget !== null){
+    window.scrollTo(0, ddayToSwimTarget);
     event.preventDefault();
     requestAnimationFrame(update);
     return;
