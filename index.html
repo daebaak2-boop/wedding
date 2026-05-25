@@ -1710,7 +1710,10 @@ function startVenueOutroIfNeeded(){
   venueSequenceState.outroStartedAt =
     performance.now();
   venueStory.classList.add("outro");
-  startLetterBrake(window.scrollY);
+  startLetterBrake(
+    venueSequenceState.releaseY ||
+    venueStory.offsetTop + 1
+  );
   requestAnimationFrame(update);
   return true;
 }
@@ -2749,10 +2752,14 @@ function updateVenue(){
 
   if(!venueSequenceState.startedAt){
     const lockY =
-      window.scrollY;
+      venueStory.offsetTop + 1;
     venueSequenceState.startedAt =
       performance.now();
     startLetterBrake(lockY);
+  }
+
+  if(letterScrollLockActive && !venueSequenceState.done){
+    holdLetterBrakePosition();
   }
 
   photo.classList.add("show");
@@ -2784,7 +2791,7 @@ function updateVenue(){
   if(elapsed >= releaseAt){
     venueSequenceState.done = true;
     venueSequenceState.releaseY =
-      window.scrollY;
+      venueStory.offsetTop + 1;
     stopLetterBrake();
   }else{
     requestAnimationFrame(update);
@@ -2829,7 +2836,10 @@ function updateDdayReveal(){
     if(!ddayRevealStartedAt){
       ddayRevealStartedAt = now;
       dday.classList.add("floating", "show");
-      startLetterBrake(window.scrollY);
+      startLetterBrake(
+        venueSequenceState.releaseY ||
+        venueStory.offsetTop + 1
+      );
     }
 
     if(ddayRevealStartedAt && !ddayRevealDone){
