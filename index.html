@@ -1635,6 +1635,31 @@ function getLetterGuardTarget(deltaY){
   return storyTop + stepScroll * unlockedStep + 1;
 }
 
+function getVenueGuardTarget(deltaY){
+  if(!venueStory || deltaY <= 0) return null;
+
+  const finalLetter =
+    letterSections[letterSections.length - 1];
+  const finalLetterDone =
+    letterSequenceState.get(finalLetter)?.done;
+
+  if(!finalLetterDone || venueSequenceState.done) return null;
+
+  const venueTop =
+    venueStory.offsetTop;
+  const venueEnd =
+    venueTop + venueStory.offsetHeight - window.innerHeight;
+  const futureY =
+    window.scrollY + deltaY;
+
+  if(
+    futureY < venueTop ||
+    window.scrollY > venueEnd
+  ) return null;
+
+  return venueTop + 1;
+}
+
 function getDdayToSwimTarget(deltaY){
   if(
     deltaY <= 0 ||
@@ -1748,6 +1773,8 @@ function startWelcomeOutroIfNeeded(){
 }
 
 function blockDetailsBrakeScroll(event){
+  const scrollDelta =
+    event.deltaY ?? 1;
   const storyBrakeActive =
     !isLetterStoryInView() &&
     (
@@ -1774,7 +1801,7 @@ function blockDetailsBrakeScroll(event){
   }
 
   const letterGuardTarget =
-    getLetterGuardTarget(event.deltaY || 0);
+    getLetterGuardTarget(scrollDelta);
 
   if(letterGuardTarget !== null){
     window.scrollTo(0, letterGuardTarget);
@@ -1783,8 +1810,18 @@ function blockDetailsBrakeScroll(event){
     return;
   }
 
+  const venueGuardTarget =
+    getVenueGuardTarget(scrollDelta);
+
+  if(venueGuardTarget !== null){
+    window.scrollTo(0, venueGuardTarget);
+    event.preventDefault();
+    requestAnimationFrame(update);
+    return;
+  }
+
   const ddayToSwimTarget =
-    getDdayToSwimTarget(event.deltaY || 0);
+    getDdayToSwimTarget(scrollDelta);
 
   if(ddayToSwimTarget !== null){
     window.scrollTo(0, ddayToSwimTarget);
@@ -1849,6 +1886,40 @@ function blockDetailsBrakeKeys(event){
       holdBoyBrakePosition();
     }
     event.preventDefault();
+    return;
+  }
+
+  const keyDelta =
+    ["ArrowUp", "PageUp", "Home"].includes(event.key)
+      ? -1
+      : 1;
+  const letterGuardTarget =
+    getLetterGuardTarget(keyDelta);
+
+  if(letterGuardTarget !== null){
+    window.scrollTo(0, letterGuardTarget);
+    event.preventDefault();
+    requestAnimationFrame(update);
+    return;
+  }
+
+  const venueGuardTarget =
+    getVenueGuardTarget(keyDelta);
+
+  if(venueGuardTarget !== null){
+    window.scrollTo(0, venueGuardTarget);
+    event.preventDefault();
+    requestAnimationFrame(update);
+    return;
+  }
+
+  const ddayToSwimTarget =
+    getDdayToSwimTarget(keyDelta);
+
+  if(ddayToSwimTarget !== null){
+    window.scrollTo(0, ddayToSwimTarget);
+    event.preventDefault();
+    requestAnimationFrame(update);
     return;
   }
 
