@@ -1553,6 +1553,20 @@ function stopLetterBrake(){
   letterScrollLockActive = false;
 }
 
+function holdActiveBrakePosition(){
+  if(letterScrollLockActive){
+    holdLetterBrakePosition();
+    return true;
+  }
+
+  if(boyScrollLockActive){
+    holdBoyBrakePosition();
+    return true;
+  }
+
+  return false;
+}
+
 function hasActiveStorySequence(){
   return Object
     .values(storySequenceState)
@@ -2153,6 +2167,7 @@ function updateIntro(){
 }
 
 function update(){
+  holdActiveBrakePosition();
 
   updateIntro();
 
@@ -2808,7 +2823,11 @@ function updateDdayReveal(){
 
   if(!dday) return;
 
-  if(venueScrollsBack){
+  if(
+    venueScrollsBack &&
+    !venueSequenceState.outroStartedAt &&
+    !ddayRevealStartedAt
+  ){
     venueStory.classList.remove("outro");
   }
 
