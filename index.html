@@ -3000,14 +3000,19 @@ function updateSwim(){
   }
 
   if(progress > 0 && !welcomeSequenceState.startedAt){
+    const welcomeLockY =
+      swimStory.offsetTop + 1;
     prepareSwimPhotos(6);
     welcomeSequenceState.startedAt =
       performance.now();
     welcomeSequenceState.done = false;
-    startLetterBrake(window.scrollY);
+    startLetterBrake(welcomeLockY);
   }
 
   if(welcomeSequenceState.startedAt && !welcomeSequenceState.done){
+    if(letterScrollLockActive){
+      holdLetterBrakePosition();
+    }
     const elapsed =
       performance.now() - welcomeSequenceState.startedAt;
     const copyAt =
